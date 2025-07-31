@@ -1,22 +1,23 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const { CardsController } = require('./controllers/CardsController');
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost:27017/cardsdb');
+const mongoUri = process.env.MONGO_URI ?? '';
+mongoose.connect(mongoUri);
 
-mongoose.connection.on('connected', () => {
-  console.log('Connected to MongoDB.');
-});
-
-app.post('/cards', CardsController.createCard);
-app.get('/cards', CardsController.getCards);
+mongoose.connection.on('connected', () =>
+  console.log('Database connection established!')
+);
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log('API is running on http://localhost:3000');
 });
 
 module.exports = app;
