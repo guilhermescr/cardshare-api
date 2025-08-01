@@ -1,10 +1,16 @@
 import js from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import parser from '@typescript-eslint/parser';
+import globals from 'globals';
 
 export default [
   {
     ...js.configs.recommended,
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
     rules: {
       ...js.configs.recommended.rules,
       'no-unused-vars': 'off',
@@ -16,6 +22,9 @@ export default [
       parser,
       ecmaVersion: 2021,
       sourceType: 'module',
+      globals: {
+        ...globals.node,
+      },
     },
     plugins: {
       '@typescript-eslint': tseslint,
