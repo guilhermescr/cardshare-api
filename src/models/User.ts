@@ -17,6 +17,13 @@ const UserSchema = new Schema({
       'Please, fill a valid email address.',
     ],
   },
+  emailConfirmed: {
+    type: Boolean,
+    default: false,
+  },
+  emailConfirmationToken: {
+    type: String,
+  },
   password: {
     type: String,
     required: true,

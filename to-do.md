@@ -4,10 +4,10 @@
 
 ### 1. Register Confirmation via E-mail
 
-- [ ] Send a confirmation e-mail after user registration.
-- [ ] Add a confirmation token to the user model.
-- [ ] Create a route to confirm registration using the token.
-- [ ] Prevent login for users who have not confirmed their e-mail.
+- [x] Send a confirmation e-mail after user registration.
+- [x] Add a confirmation token to the user model.
+- [x] Create a route to confirm registration using the token.
+- [x] Prevent login for users who have not confirmed their e-mail.
 - [ ] Add resend confirmation e-mail functionality.
 
 ### 2. Cards CRUD Routes
@@ -19,7 +19,7 @@
   - [ ] `GET /cards/:id` - Get a single card by ID.
   - [ ] `PUT /cards/:id` - Update a card by ID.
   - [ ] `DELETE /cards/:id` - Delete a card by ID.
-- [ ] Add authentication middleware to protect card routes.
+- [x] Add authentication middleware to protect card routes.
 
 ---
 
