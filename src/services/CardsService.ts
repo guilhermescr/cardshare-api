@@ -2,36 +2,39 @@ import { CreateCardDto, UpdateCardDto } from '../dtos/card.dto';
 import { Card } from '../models/Card';
 
 export class CardsService {
-  static async getCards(userId: string) {
+  static async getCards(authenticatedUserId: string) {
     return Card.find({
       $or: [
         {
           isPublic: true,
         },
         {
-          owner: userId,
+          owner: authenticatedUserId,
         },
       ],
     }).populate('owner', 'username');
   }
 
-  static async createCard(userId: string, createCardDto: CreateCardDto) {
+  static async createCard(
+    authenticatedUserId: string,
+    createCardDto: CreateCardDto
+  ) {
     const card = new Card({
       ...createCardDto,
-      owner: userId,
+      owner: authenticatedUserId,
     });
     return card.save();
   }
 
   static async updateCard(
-    userId: string,
+    authenticatedUserId: string,
     cardId: string,
     updateCardDto: UpdateCardDto
   ) {
     const card = await Card.findOneAndUpdate(
       {
         _id: cardId,
-        owner: userId,
+        owner: authenticatedUserId,
       },
       updateCardDto,
       {
@@ -41,10 +44,10 @@ export class CardsService {
     return card;
   }
 
-  static async deleteCard(userId: string, cardId: string) {
+  static async deleteCard(authenticatedUserId: string, cardId: string) {
     const result = await Card.findOneAndDelete({
       _id: cardId,
-      owner: userId,
+      owner: authenticatedUserId,
     });
     return result;
   }

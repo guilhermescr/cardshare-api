@@ -11,9 +11,10 @@ export class CardsController {
     next: NextFunction
   ) {
     try {
-      const userId = req.user?.id;
-      if (!userId) throw { status: 401, message: 'User not authenticated.' };
-      const cards = await CardsService.getCards(userId);
+      const authenticatedUserId = req.user?.id;
+      if (!authenticatedUserId)
+        throw { status: 401, message: 'User not authenticated.' };
+      const cards = await CardsService.getCards(authenticatedUserId);
       return res.status(200).json({ cards });
     } catch (error: any) {
       next(error);
@@ -26,13 +27,17 @@ export class CardsController {
     next: NextFunction
   ) {
     try {
-      const userId = req.user?.id;
-      if (!userId) throw { status: 401, message: 'User not authenticated.' };
+      const authenticatedUserId = req.user?.id;
+      if (!authenticatedUserId)
+        throw { status: 401, message: 'User not authenticated.' };
       const createCardDto = await ClassValidator.validate(
         CreateCardDto,
         req.body
       );
-      const card = await CardsService.createCard(userId, createCardDto);
+      const card = await CardsService.createCard(
+        authenticatedUserId,
+        createCardDto
+      );
       return res.status(201).json({ card });
     } catch (error: any) {
       next(error);
@@ -45,14 +50,19 @@ export class CardsController {
     next: NextFunction
   ) {
     try {
-      const userId = req.user?.id;
-      if (!userId) throw { status: 401, message: 'User not authenticated.' };
+      const authenticatedUserId = req.user?.id;
+      if (!authenticatedUserId)
+        throw { status: 401, message: 'User not authenticated.' };
       const cardId = req.params.id;
       const updateCardDto = await ClassValidator.validate(
         UpdateCardDto,
         req.body
       );
-      const card = await CardsService.updateCard(userId, cardId, updateCardDto);
+      const card = await CardsService.updateCard(
+        authenticatedUserId,
+        cardId,
+        updateCardDto
+      );
       if (!card) throw { status: 404, message: 'Card not found.' };
       return res.status(200).json({ card });
     } catch (error: any) {
@@ -66,10 +76,14 @@ export class CardsController {
     next: NextFunction
   ) {
     try {
-      const userId = req.user?.id;
-      if (!userId) throw { status: 401, message: 'User not authenticated.' };
+      const authenticatedUserId = req.user?.id;
+      if (!authenticatedUserId)
+        throw { status: 401, message: 'User not authenticated.' };
       const cardId = req.params.id;
-      const deletedCard = await CardsService.deleteCard(userId, cardId);
+      const deletedCard = await CardsService.deleteCard(
+        authenticatedUserId,
+        cardId
+      );
       if (!deletedCard) throw { status: 404, message: 'Card not found.' };
       return res.status(204).send();
     } catch (error: any) {

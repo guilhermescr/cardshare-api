@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
+import usersRoutes from './routes/users';
 import cardsRoutes from './routes/cards';
 import { errorHandler } from './middlewares/errorHandler';
 
@@ -10,6 +11,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use('/auth', authRoutes);
+app.use('/users', usersRoutes);
 app.use('/cards', cardsRoutes);
 
 app.use(errorHandler);
