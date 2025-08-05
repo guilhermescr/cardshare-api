@@ -1,4 +1,15 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
+
+export interface IUser extends Document {
+  _id: Types.ObjectId;
+  username: string;
+  email: string;
+  emailConfirmed: boolean;
+  emailConfirmationToken?: string | null;
+  password: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 const { Schema } = mongoose;
 

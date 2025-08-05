@@ -25,3 +25,10 @@ export class AuthPayloadDto {
   username!: string;
   email!: string;
 }
+
+export class AuthUserDto {
+  id!: string;
+  username!: string;
+  email!: string;
+  emailConfirmed!: boolean;
+}

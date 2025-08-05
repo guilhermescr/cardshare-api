@@ -1,27 +1,42 @@
-import { Card } from '../models/Card';
-import { User } from '../models/User';
+import { UserDto } from '../dtos/user.dto';
+import { UserMapper } from '../mappers/UserMapper';
+import { Card, ICard } from '../models/Card';
+import { IUser, User } from '../models/User';
 
 export class UsersService {
-  static async getUserById(authenticatedUserId: string, targetUserId: string) {
-    const foundUser = await User.findById(targetUserId);
+  static async getUserById(
+    authenticatedUserId: string,
+    targetUserId: string
+  ): Promise<UserDto> {
+    const foundUser: IUser | null = await User.findById(targetUserId);
 
     if (!foundUser) throw { status: 404, message: 'User not found.' };
 
-    const cardQuery =
-      authenticatedUserId === targetUserId
-        ? { owner: foundUser._id }
-        : {
-            owner: foundUser._id,
-            isPublic: true,
-          };
+    const isSelf = authenticatedUserId === targetUserId;
 
-    const foundCards = await Card.find(cardQuery);
+    const cardQuery = isSelf
+      ? { owner: foundUser._id }
+      : { owner: foundUser._id, isPublic: true };
 
-    return {
-      id: foundUser._id,
-      username: foundUser.username,
-      email: authenticatedUserId === targetUserId ? foundUser.email : undefined,
-      cards: foundCards,
-    };
+    const foundCards: ICard[] = await Card.find(cardQuery);
+
+    const favoritedQuery = isSelf
+      ? { favorites: foundUser._id }
+      : { favorites: foundUser._id, isPublic: true };
+
+    const likedQuery = isSelf
+      ? { likes: foundUser._id }
+      : { likes: foundUser._id, isPublic: true };
+
+    const favoritedCards: ICard[] = await Card.find(favoritedQuery);
+    const likedCards: ICard[] = await Card.find(likedQuery);
+
+    return UserMapper.toDto(
+      foundUser,
+      foundCards,
+      favoritedCards,
+      likedCards,
+      isSelf
+    );
   }
 }

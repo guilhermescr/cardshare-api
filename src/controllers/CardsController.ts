@@ -90,4 +90,43 @@ export class CardsController {
       next(error);
     }
   }
+
+  static async toggleLikeCard(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const authenticatedUserId = req.user?.id;
+      if (!authenticatedUserId)
+        throw { status: 401, message: 'User not authorized.' };
+      const cardId = req.params.id;
+      const card = await CardsService.toggleLikeCard(
+        authenticatedUserId,
+        cardId
+      );
+      return res.status(200).json({ card });
+    } catch (error: any) {
+      next(error);
+    }
+  }
+  static async toggleFavoriteCard(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const authenticatedUserId = req.user?.id;
+      if (!authenticatedUserId)
+        throw { status: 401, message: 'User not authorized.' };
+      const cardId = req.params.id;
+      const card = await CardsService.toggleFavoriteCard(
+        authenticatedUserId,
+        cardId
+      );
+      return res.status(200).json({ card });
+    } catch (error: any) {
+      next(error);
+    }
+  }
 }

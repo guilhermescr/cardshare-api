@@ -2,12 +2,13 @@ import jwt from 'jsonwebtoken';
 import { compare, hash } from 'bcrypt';
 import { User } from '../models/User';
 import { JwtExpiresIn } from '../constants/jwt';
-import { LoginDto, RegisterDto } from '../dtos/auth.dto';
+import { AuthUserDto, LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { randomBytes } from 'crypto';
 import { sendEmail } from './EmailService';
+import { AuthMapper } from '../mappers/AuthMapper';
 
 export class AuthService {
-  static async register(registerDto: RegisterDto) {
+  static async register(registerDto: RegisterDto): Promise<AuthUserDto> {
     const { username, email, password } = registerDto;
 
     const existingUser = await User.findOne({
@@ -39,15 +40,12 @@ export class AuthService {
       confirmationUrl
     );
 
-    return {
-      id: createdUser._id,
-      username: createdUser.username,
-      email: createdUser.email,
-      emailConfirmed: createdUser.emailConfirmed,
-    };
+    return AuthMapper.toAuthUserDto(createdUser);
   }
 
-  static async confirmEmail(emailConfirmationToken: string) {
+  static async confirmEmail(
+    emailConfirmationToken: string
+  ): Promise<AuthUserDto> {
     if (!emailConfirmationToken) {
       throw {
         status: 400,
@@ -76,15 +74,12 @@ export class AuthService {
     existingUser.emailConfirmationToken = undefined;
     await existingUser.save();
 
-    return {
-      id: existingUser._id,
-      username: existingUser.username,
-      email: existingUser.email,
-      emailConfirmed: existingUser.emailConfirmed,
-    };
+    return AuthMapper.toAuthUserDto(existingUser);
   }
 
-  static async login(loginDto: LoginDto) {
+  static async login(
+    loginDto: LoginDto
+  ): Promise<{ token: string; user: AuthUserDto }> {
     const { identifier, password } = loginDto;
 
     const existingUser = await User.findOne({
@@ -107,11 +102,7 @@ export class AuthService {
     const isMatch = await compare(password, existingUser.password);
     if (!isMatch) throw { status: 401, message: 'Invalid password.' };
 
-    const payload = {
-      id: existingUser._id,
-      username: existingUser.username,
-      email: existingUser.email,
-    };
+    const payload = AuthMapper.toAuthPayloadDto(existingUser);
     const secret = process.env.JWT_SECRET ?? '';
     const envExpiresIn = process.env.JWT_EXPIRES_IN as JwtExpiresIn;
     const expiresIn = Object.values(JwtExpiresIn).includes(envExpiresIn)
@@ -123,12 +114,7 @@ export class AuthService {
 
     return {
       token,
-      user: {
-        id: existingUser._id,
-        username: existingUser.username,
-        email: existingUser.email,
-        emailConfirmed: existingUser.emailConfirmed,
-      },
+      user: AuthMapper.toAuthUserDto(existingUser),
     };
   }
 }

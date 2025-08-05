@@ -35,3 +35,17 @@ export class UpdateCardDto {
   @IsOptional()
   isPublic?: boolean;
 }
+
+export class CardDto {
+  id!: string;
+  title!: string;
+  description?: string | null;
+  imageUrl?: string | null;
+  isPublic!: boolean;
+  owner!: string;
+  ownerUsername?: string;
+  likes!: string[];
+  favorites!: string[];
+  createdAt!: Date;
+  updatedAt!: Date;
+}
