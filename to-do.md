@@ -2,52 +2,73 @@
 
 ## Features to Implement
 
-### 1. Register Confirmation via E-mail
+### Core Features
 
-- [x] Complete e-mail confirmation flow for new users (send confirmation e-mail, store token, confirm via route, restrict login until confirmed).
+- [x] User registration and e-mail confirmation
+- [x] JWT authentication and authorization
+- [x] Card CRUD (Create, Read, Update, Delete)
+- [x] Public/private cards
+- [x] API endpoints for cards and users
 
 ---
 
-### 2. Cards Feature
+### Feature Ideas
 
-#### Card Model
+#### 1. Likes & Favorites
 
-- [x] Design Card schema (Mongoose) with:
-  - `title` (string, required)
-  - `description` (string)
-  - `isPublic` (boolean, default: false)
-  - `owner` (ObjectId, ref: User, required)
-  - `createdAt` (Date, default: now)
-  - `updatedAt` (Date, auto-update)
-  - (Add more fields if needed, e.g. tags, images)
+- [ ] Users can like or favorite cards
+- [ ] Track number of likes per card
+- [ ] Endpoint: `POST /cards/:id/like`
 
-#### Card Operations
+#### 2. Tags & Categories
 
-- [ ] Authenticated users can create, view, update, and delete their own cards.
-- [x] Each card can be public or private (`isPublic`).
-- [x] Private cards: Only owner can access (CRUD).
-- [ ] Public cards: Visible to all users in feed and user profiles.
+- [ ] Add tags or categories to cards
+- [ ] Filter/search cards by tag/category
+- [ ] Endpoint: `GET /cards?tag=magic`
 
-#### API Endpoints
+#### 3. Comments
 
-- [x] `POST /cards` - Create a card (owner set from JWT).
-- [x] `GET /cards` - List all cards owned by authenticated user.
-- [x] `GET /cards/:id` - Get card by ID (owner or public).
-- [x] `PUT /cards/:id` - Update card by ID (owner only).
-- [x] `DELETE /cards/:id` - Delete card by ID (owner only).
-- [x] `GET /feed` - List all public cards from all users.
-- [ ] `GET /users/:id/cards` - List public cards for a specific user.
+- [ ] Users can comment on public cards
+- [ ] Endpoint: `POST /cards/:id/comments`
 
-#### Access Control
+#### 4. Card Sharing
 
-- [x] Middleware to enforce JWT authentication for protected routes.
-- [ ] Middleware to check card ownership for update/delete.
-- [ ] Middleware to allow public card viewing for feed/profile.
+- [ ] Generate shareable links for public cards
+- [ ] Endpoint: `GET /cards/:id/share`
+
+#### 5. User Profiles
+
+- [ ] Add profile info (bio, avatar) to users
+- [ ] Endpoint: `PUT /users/:id/profile`
+
+#### 6. Card Search & Filter
+
+- [ ] Search cards by title, description, tags, or owner
+- [ ] Endpoint: `GET /cards?search=dragon`
+
+#### 7. Pagination & Sorting
+
+- [ ] Paginate card lists
+- [ ] Sort cards by date, likes, etc.
+- [ ] Endpoint: `GET /cards?page=2&sort=likes`
+
+#### 8. Card History & Audit
+
+- [ ] Track changes to cards (edit history)
+- [ ] Endpoint: `GET /cards/:id/history`
+
+#### 9. Admin Features
+
+- [ ] Admin-only endpoints for managing users and cards
+- [ ] Endpoint: `DELETE /users/:id` (admin only)
+
+#### 10. Notifications
+
+- [ ] Notify users when their cards are liked or commented on
 
 ---
 
 **Notes:**
 
-- Use JWT for authentication and authorization.
-- Use nodemailer for e-mail features.
 - Update API documentation after each feature.
+- Use nodemailer for e-mail features.
