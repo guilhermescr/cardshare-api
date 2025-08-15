@@ -14,9 +14,9 @@
 ### Card Management
 
 - [x] Create new card endpoint
-- [ ] Get card by ID
-- [ ] Update card content
-- [ ] Delete card (soft/hard delete)
+- [x] Get card by ID
+- [x] Update card content
+- [x] Delete card (soft/hard delete)
 - [ ] Get user's cards with pagination
 - [ ] Card visibility settings (public/private/unlisted)
 
@@ -35,9 +35,9 @@
 
 ### Social Features
 
-- [ ] Like/unlike cards
+- [x] Like/unlike cards
 - [ ] Comment system (CRUD)
-- [ ] Card bookmarking/favorites
+- [x] Card bookmarking/favorites
 - [ ] Share card functionality
 - [ ] Activity feed generation
 
