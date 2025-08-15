@@ -1,6 +1,6 @@
 import { UserDto } from '../dtos/user.dto';
 import { UserMapper } from '../mappers/UserMapper';
-import { Card, ICard } from '../models/Card';
+import { Card, CardVisibilityEnum, ICard } from '../models/Card';
 import { IUser, User } from '../models/User';
 
 export class UsersService {
@@ -16,17 +16,17 @@ export class UsersService {
 
     const cardQuery = isSelf
       ? { owner: foundUser._id }
-      : { owner: foundUser._id, isPublic: true };
+      : { owner: foundUser._id, visibility: CardVisibilityEnum.public };
 
     const foundCards: ICard[] = await Card.find(cardQuery);
 
     const favoritedQuery = isSelf
       ? { favorites: foundUser._id }
-      : { favorites: foundUser._id, isPublic: true };
+      : { favorites: foundUser._id, visibility: CardVisibilityEnum.public };
 
     const likedQuery = isSelf
       ? { likes: foundUser._id }
-      : { likes: foundUser._id, isPublic: true };
+      : { likes: foundUser._id, visibility: CardVisibilityEnum.public };
 
     const favoritedCards: ICard[] = await Card.find(favoritedQuery);
     const likedCards: ICard[] = await Card.find(likedQuery);

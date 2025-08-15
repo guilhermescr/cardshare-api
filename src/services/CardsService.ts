@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { CardDto, CreateCardDto, UpdateCardDto } from '../dtos/card.dto';
-import { Card, ICard } from '../models/Card';
+import { Card, CardVisibilityEnum, ICard } from '../models/Card';
 import { CardMapper } from '../mappers/CardMapper';
 
 export class CardsService {
@@ -10,7 +10,7 @@ export class CardsService {
     const cards: ICard[] = await Card.find({
       $or: [
         {
-          isPublic: true,
+          visibility: CardVisibilityEnum.public,
         },
         {
           owner: authenticatedUserId,
@@ -26,15 +26,11 @@ export class CardsService {
     cardId: string
   ): Promise<CardDto | null> {
     const card = await Card.findOne({
+      _id: cardId,
       $or: [
-        {
-          _id: cardId,
-          isPublic: true,
-        },
-        {
-          _id: cardId,
-          owner: authenticatedUserId,
-        },
+        { visibility: CardVisibilityEnum.public },
+        { owner: authenticatedUserId },
+        { visibility: CardVisibilityEnum.unlisted },
       ],
     }).populate('owner', 'username');
 

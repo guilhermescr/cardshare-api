@@ -27,7 +27,7 @@ export class CardMapper {
       title: card.title,
       description: card.description,
       imageUrl: card.imageUrl,
-      isPublic: card.isPublic,
+      visibility: card.visibility,
       owner: ownerId,
       ownerUsername,
       likes: card.likes?.map((id: Types.ObjectId) => id.toString()) ?? [],

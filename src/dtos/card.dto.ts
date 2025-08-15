@@ -1,4 +1,6 @@
-import { IsBoolean, IsOptional, IsString, IsNotEmpty } from 'class-validator';
+import { IsOptional, IsString, IsNotEmpty, IsEnum } from 'class-validator';
+import { CardVisibilityEnum } from '../models/Card';
+import { Transform } from 'class-transformer';
 
 export class CreateCardDto {
   @IsNotEmpty()
@@ -13,9 +15,12 @@ export class CreateCardDto {
   @IsOptional()
   imageUrl?: string;
 
-  @IsBoolean()
+  @IsEnum(CardVisibilityEnum)
   @IsOptional()
-  isPublic?: boolean;
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.toLowerCase() : value
+  )
+  visibility?: CardVisibilityEnum;
 }
 
 export class UpdateCardDto {
@@ -31,9 +36,12 @@ export class UpdateCardDto {
   @IsOptional()
   imageUrl?: string;
 
-  @IsBoolean()
+  @IsEnum(CardVisibilityEnum)
   @IsOptional()
-  isPublic?: boolean;
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.toLowerCase() : value
+  )
+  visibility?: CardVisibilityEnum;
 }
 
 export class CardDto {
@@ -41,7 +49,7 @@ export class CardDto {
   title!: string;
   description?: string | null;
   imageUrl?: string | null;
-  isPublic!: boolean;
+  visibility!: CardVisibilityEnum;
   owner!: string;
   ownerUsername?: string;
   likes!: string[];

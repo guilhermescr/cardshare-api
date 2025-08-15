@@ -46,7 +46,7 @@ Card {
   description: string,  // Card effect or explanation
   imageUrl: string,     // Link to the card's image
   likes: number,        // Count of user likes
-  isPublic: boolean,    // Visibility flag
+  visibility: 'private' | 'public' | 'unlisted',    // Visibility flag
   createdBy: ObjectId,  // User who created the card
   createdAt: Date,
   updatedAt: Date

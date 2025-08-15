@@ -1,11 +1,17 @@
 import mongoose, { Document, Types } from 'mongoose';
 
+export enum CardVisibilityEnum {
+  private = 'private',
+  public = 'public',
+  unlisted = 'unlisted',
+}
+
 export interface ICard extends Document {
   _id: Types.ObjectId;
   title: string;
   description?: string | null;
   imageUrl?: string | null;
-  isPublic: boolean;
+  visibility: CardVisibilityEnum;
   owner: Types.ObjectId | { _id: Types.ObjectId; username?: string };
   likes: Types.ObjectId[];
   favorites: Types.ObjectId[];
@@ -27,9 +33,10 @@ const CardSchema = new Schema(
     imageUrl: {
       type: String,
     },
-    isPublic: {
-      type: Boolean,
-      default: false,
+    visibility: {
+      type: String,
+      enum: Object.values(CardVisibilityEnum),
+      default: 'public',
     },
     owner: {
       type: Schema.Types.ObjectId,
