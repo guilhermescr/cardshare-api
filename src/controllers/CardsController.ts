@@ -21,6 +21,26 @@ export class CardsController {
     }
   }
 
+  static async getCardById(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const authenticatedUserId = req.user?.id;
+      if (!authenticatedUserId)
+        throw { status: 401, message: 'User not authenticated.' };
+
+      const cardId = req.params.id;
+      const card = await CardsService.findCardById(authenticatedUserId, cardId);
+      if (!card) throw { status: 404, message: 'Card not found.' };
+
+      return res.status(200).json({ card });
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
   static async createCard(
     req: AuthenticatedRequest,
     res: Response,

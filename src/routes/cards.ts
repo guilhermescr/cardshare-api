@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.use(authMiddleware);
 router.get('/', CardsController.getCards);
+router.get('/:id', CardsController.getCardById);
 router.post('/', CardsController.createCard);
 router.put('/:id', CardsController.updateCard);
 router.delete('/:id', CardsController.deleteCard);

@@ -21,6 +21,26 @@ export class CardsService {
     return CardMapper.toDtoArray(cards);
   }
 
+  static async findCardById(
+    authenticatedUserId: string,
+    cardId: string
+  ): Promise<CardDto | null> {
+    const card = await Card.findOne({
+      $or: [
+        {
+          _id: cardId,
+          isPublic: true,
+        },
+        {
+          _id: cardId,
+          owner: authenticatedUserId,
+        },
+      ],
+    }).populate('owner', 'username');
+
+    return card ? CardMapper.toDto(card) : null;
+  }
+
   static async createCard(
     authenticatedUserId: string,
     createCardDto: CreateCardDto
