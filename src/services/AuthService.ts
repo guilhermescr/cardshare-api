@@ -35,7 +35,7 @@ export class AuthService {
 
     await sendEmail(
       createdUser.email,
-      'Confirm your Cards API email',
+      'Confirm your CardShare email',
       createdUser.username,
       confirmationUrl
     );

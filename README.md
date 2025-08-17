@@ -1,4 +1,4 @@
-# 🃏 Cards API
+# 🃏 CardShare API
 
 A RESTful API for managing collectible or game cards using **Node.js**, **Express**, and **MongoDB**, following the **MVC architecture**.
 
