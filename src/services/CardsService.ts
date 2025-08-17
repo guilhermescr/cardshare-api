@@ -2,23 +2,34 @@ import mongoose from 'mongoose';
 import { CardDto, CreateCardDto, UpdateCardDto } from '../dtos/card.dto';
 import { Card, CardVisibilityEnum, ICard } from '../models/Card';
 import { CardMapper } from '../mappers/CardMapper';
+import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 
 export class CardsService {
   static async getCards(
-    authenticatedUserId: string
-  ): Promise<CardDto[] | null> {
-    const cards: ICard[] = await Card.find({
+    authenticatedUserId: string,
+    page: number,
+    limit: number
+  ): Promise<PaginatedResponseDto<CardDto>> {
+    const query = {
       $or: [
-        {
-          visibility: CardVisibilityEnum.public,
-        },
-        {
-          owner: authenticatedUserId,
-        },
+        { visibility: CardVisibilityEnum.public },
+        { owner: authenticatedUserId },
       ],
-    }).populate('owner', 'username');
+    };
 
-    return CardMapper.toDtoArray(cards);
+    const skip = (page - 1) * limit;
+
+    const [cards, total]: [ICard[], number] = await Promise.all([
+      Card.find(query).populate('owner', 'username').skip(skip).limit(limit),
+      Card.countDocuments(query),
+    ]);
+
+    return {
+      items: CardMapper.toDtoArray(cards),
+      total,
+      page,
+      limit,
+    };
   }
 
   static async findCardById(

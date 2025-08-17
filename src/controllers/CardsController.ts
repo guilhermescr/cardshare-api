@@ -14,8 +14,19 @@ export class CardsController {
       const authenticatedUserId = req.user?.id;
       if (!authenticatedUserId)
         throw { status: 401, message: 'User not authenticated.' };
-      const cards = await CardsService.getCards(authenticatedUserId);
-      return res.status(200).json({ cards });
+
+      const defaultPage = 1;
+      const defaultLimit = 10;
+
+      const page = parseInt(req.query.page as string) || defaultPage;
+      const limit = parseInt(req.query.limit as string) || defaultLimit;
+
+      const response = await CardsService.getCards(
+        authenticatedUserId,
+        page,
+        limit
+      );
+      return res.status(200).json({ ...response });
     } catch (error: any) {
       next(error);
     }
@@ -50,6 +61,7 @@ export class CardsController {
       const authenticatedUserId = req.user?.id;
       if (!authenticatedUserId)
         throw { status: 401, message: 'User not authenticated.' };
+
       const createCardDto = await ClassValidator.validate(
         CreateCardDto,
         req.body
@@ -73,6 +85,7 @@ export class CardsController {
       const authenticatedUserId = req.user?.id;
       if (!authenticatedUserId)
         throw { status: 401, message: 'User not authenticated.' };
+
       const cardId = req.params.id;
       const updateCardDto = await ClassValidator.validate(
         UpdateCardDto,
@@ -99,6 +112,7 @@ export class CardsController {
       const authenticatedUserId = req.user?.id;
       if (!authenticatedUserId)
         throw { status: 401, message: 'User not authenticated.' };
+
       const cardId = req.params.id;
       const deletedCard = await CardsService.deleteCard(
         authenticatedUserId,
@@ -120,6 +134,7 @@ export class CardsController {
       const authenticatedUserId = req.user?.id;
       if (!authenticatedUserId)
         throw { status: 401, message: 'User not authorized.' };
+
       const cardId = req.params.id;
       const card = await CardsService.toggleLikeCard(
         authenticatedUserId,
@@ -139,6 +154,7 @@ export class CardsController {
       const authenticatedUserId = req.user?.id;
       if (!authenticatedUserId)
         throw { status: 401, message: 'User not authorized.' };
+
       const cardId = req.params.id;
       const card = await CardsService.toggleFavoriteCard(
         authenticatedUserId,

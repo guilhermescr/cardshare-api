@@ -17,8 +17,8 @@
 - [x] Get card by ID
 - [x] Update card content
 - [x] Delete card (soft/hard delete)
-- [ ] Get user's cards with pagination
-- [ ] Card visibility settings (public/private/unlisted)
+- [x] Get cards with pagination
+- [x] Card visibility settings (public/private/unlisted)
 
 ### Search & Discovery
 
