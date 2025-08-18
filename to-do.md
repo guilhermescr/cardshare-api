@@ -1,5 +1,8 @@
 # Card-Sharing Web Application - Backend Features To-Do List
 
+> **Note:**  
+> The list below covers possible features and enhancements for the project. Not everything here will necessarily be implemented — features will be considered and prioritized as development progresses.
+
 ---
 
 ## 🟢 Critical (MVP)

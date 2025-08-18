@@ -1,6 +1,36 @@
+<p align="center">
+  <img src="./cardshare-api-logo.png" alt="CardShare API Logo" width="180"/>
+</p>
+
 # 🃏 CardShare API
 
-A RESTful API for managing collectible or game cards using **Node.js**, **Express**, and **MongoDB**, following the **MVC architecture**.
+A RESTful API for creating, organizing, and sharing custom cards — each with a title, description, and optional image. Designed for flexible information sharing and discovery, CardShare enables users to publish, manage, and interact with cards using **Node.js**, **Express**, and **MongoDB**, following the **MVC architecture**.
+
+---
+
+## 🚦 Project Status
+
+This project is under active development.  
+See [`to-do.md`](./to-do.md) for the full roadmap.
+
+### ✅ Completed (MVP)
+
+- User registration & login (JWT, password hashing, email verification)
+- Card CRUD (create, read, update, delete)
+- Card visibility (public/private/unlisted)
+- Likes & favorites
+- Pagination for cards
+- MVC architecture
+- Input validation & error handling
+
+### 🟡 In Progress / Planned
+
+- Full-text search & filters
+- Comment system
+- Share card functionality
+- Activity feed
+- Notification system
+- Admin features
 
 ---
 
@@ -92,23 +122,8 @@ Card {
 - ✅ Centralized error handling
 - ✅ Public/Private card visibility
 - ✅ Likes support
-- ✅ Unit & integration tests
 
----
-
-## 🧪 Testing
-
-Tests are written for:
-
-- Controllers
-- Models
-- Auth middleware
-
-Run tests with:
-
-```bash
-npm test
-```
+See [`to-do.md`](./to-do.md) for planned enhancements.
 
 ---
 
