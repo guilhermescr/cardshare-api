@@ -15,16 +15,14 @@ export class CardsController {
       if (!authenticatedUserId)
         throw { status: 401, message: 'User not authenticated.' };
 
-      const defaultPage = 1;
       const defaultLimit = 10;
-
-      const page = parseInt(req.query.page as string) || defaultPage;
       const limit = parseInt(req.query.limit as string) || defaultLimit;
+      const cursor = req.query.cursor as string | undefined;
 
-      const response = await CardsService.getCards(
+      const response = await CardsService.getCardsCursor(
         authenticatedUserId,
-        page,
-        limit
+        limit,
+        cursor
       );
       return res.status(200).json({ ...response });
     } catch (error: any) {

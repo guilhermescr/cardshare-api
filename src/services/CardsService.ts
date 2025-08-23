@@ -1,34 +1,38 @@
-import mongoose from 'mongoose';
+import mongoose, { RootFilterQuery, Types } from 'mongoose';
 import { CardDto, CreateCardDto, UpdateCardDto } from '../dtos/card.dto';
 import { Card, CardVisibilityEnum, ICard } from '../models/Card';
 import { CardMapper } from '../mappers/CardMapper';
 import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 
 export class CardsService {
-  static async getCards(
+  static async getCardsCursor(
     authenticatedUserId: string,
-    page: number,
-    limit: number
+    limit: number,
+    cursor?: string
   ): Promise<PaginatedResponseDto<CardDto>> {
-    const query = {
+    const query: RootFilterQuery<any> = {
       $or: [
         { visibility: CardVisibilityEnum.public },
         { owner: authenticatedUserId },
       ],
     };
 
-    const skip = (page - 1) * limit;
+    if (cursor) {
+      query._id = { $gt: new Types.ObjectId(cursor) };
+    }
 
-    const [cards, total]: [ICard[], number] = await Promise.all([
-      Card.find(query).populate('owner', 'username').skip(skip).limit(limit),
-      Card.countDocuments(query),
-    ]);
+    const cards: ICard[] = await Card.find(query)
+      .sort({ _id: 1 })
+      .limit(limit + 1)
+      .populate('owner', 'username');
+
+    const items = CardMapper.toDtoArray(cards.slice(0, limit));
+    const hasNext = cards.length > limit;
+    const nextCursor = hasNext ? items[items.length - 1].id : undefined;
 
     return {
-      items: CardMapper.toDtoArray(cards),
-      total,
-      page,
-      limit,
+      items,
+      nextCursor,
     };
   }
 
