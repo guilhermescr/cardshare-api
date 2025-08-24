@@ -1,4 +1,4 @@
-import { UserDto } from '../dtos/user.dto';
+import { UserDto, UserRefDto } from '../dtos/user.dto';
 import { ICard } from '../models/Card';
 import { IUser } from '../models/User';
 import { CardMapper } from './CardMapper';
@@ -9,7 +9,9 @@ export class UserMapper {
     cards: ICard[],
     favorites: ICard[],
     likes: ICard[],
-    includeEmail: boolean
+    includeEmail: boolean,
+    following: UserRefDto[],
+    followers: UserRefDto[]
   ): UserDto {
     return {
       id: user._id.toString(),
@@ -18,6 +20,8 @@ export class UserMapper {
       cards: CardMapper.toDtoArray(cards),
       favorites: CardMapper.toDtoArray(favorites),
       likes: CardMapper.toDtoArray(likes),
+      following,
+      followers,
     };
   }
 }

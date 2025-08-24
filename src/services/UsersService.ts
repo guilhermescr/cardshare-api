@@ -1,4 +1,4 @@
-import { UserDto } from '../dtos/user.dto';
+import { UserDto, UserRefDto } from '../dtos/user.dto';
 import { UserMapper } from '../mappers/UserMapper';
 import { Card, CardVisibilityEnum, ICard } from '../models/Card';
 import { IUser, User } from '../models/User';
@@ -31,12 +31,33 @@ export class UsersService {
     const favoritedCards: ICard[] = await Card.find(favoritedQuery);
     const likedCards: ICard[] = await Card.find(likedQuery);
 
+    const followingUsers: IUser[] = await User.find(
+      { _id: { $in: foundUser.following } },
+      '_id username'
+    );
+    const followersUsers: IUser[] = await User.find(
+      { _id: { $in: foundUser.followers } },
+      '_id username'
+    );
+
+    const following: UserRefDto[] = followingUsers.map((u) => ({
+      id: u._id.toString(),
+      username: u.username,
+    }));
+
+    const followers: UserRefDto[] = followersUsers.map((u) => ({
+      id: u._id.toString(),
+      username: u.username,
+    }));
+
     return UserMapper.toDto(
       foundUser,
       foundCards,
       favoritedCards,
       likedCards,
-      isSelf
+      isSelf,
+      following,
+      followers
     );
   }
 
@@ -77,6 +98,6 @@ export class UsersService {
       );
     }
 
-    return isFollowing;
+    return !isFollowing;
   }
 }
