@@ -18,11 +18,15 @@ export class CardsController {
       const defaultLimit = 10;
       const limit = parseInt(req.query.limit as string) || defaultLimit;
       const cursor = req.query.cursor as string | undefined;
+      const search = req.query.search
+        ? (req.query.search as string).trim()
+        : undefined;
 
       const response = await CardsService.getCardsCursor(
         authenticatedUserId,
         limit,
-        cursor
+        cursor,
+        search
       );
       return res.status(200).json({ ...response });
     } catch (error: any) {

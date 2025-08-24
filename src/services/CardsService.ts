@@ -3,14 +3,16 @@ import { CardDto, CreateCardDto, UpdateCardDto } from '../dtos/card.dto';
 import { Card, CardVisibilityEnum, ICard } from '../models/Card';
 import { CardMapper } from '../mappers/CardMapper';
 import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
+import { User } from '../models/User';
 
 export class CardsService {
   static async getCardsCursor(
     authenticatedUserId: string,
     limit: number,
-    cursor?: string
+    cursor?: string,
+    search?: string
   ): Promise<PaginatedResponseDto<CardDto>> {
-    const query: RootFilterQuery<any> = {
+    const query: RootFilterQuery<ICard> = {
       $or: [
         { visibility: CardVisibilityEnum.public },
         { owner: authenticatedUserId },
@@ -19,6 +21,27 @@ export class CardsService {
 
     if (cursor) {
       query._id = { $gt: new Types.ObjectId(cursor) };
+    }
+
+    if (search) {
+      const users = await User.find({
+        username: { $regex: search, $options: 'i' },
+      }).select('_id');
+      const ownerIds = users.map((user) => user._id);
+
+      query.$and = [
+        {
+          $or: [
+            {
+              title: { $regex: search, $options: 'i' },
+            },
+            {
+              description: { $regex: search, $options: 'i' },
+            },
+            ...(ownerIds.length > 0 ? [{ owner: { $in: ownerIds } }] : []),
+          ],
+        },
+      ];
     }
 
     const cards: ICard[] = await Card.find(query)
