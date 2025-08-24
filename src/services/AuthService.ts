@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { compare, hash } from 'bcrypt';
-import { User } from '../models/User';
+import { IUser, User } from '../models/User';
 import { JwtExpiresIn } from '../constants/jwt';
 import { AuthUserDto, LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { randomBytes } from 'crypto';
@@ -11,7 +11,7 @@ export class AuthService {
   static async register(registerDto: RegisterDto): Promise<AuthUserDto> {
     const { username, email, password } = registerDto;
 
-    const existingUser = await User.findOne({
+    const existingUser: IUser | null = await User.findOne({
       $or: [{ email }, { username }],
     });
     if (existingUser)
@@ -22,13 +22,19 @@ export class AuthService {
 
     const emailConfirmationToken = randomBytes(32).toString('hex');
 
-    const createdUser = await User.create({
+    const createdUserDoc = await User.create({
       username,
       email,
       password: hashedPassword,
       emailConfirmationToken,
       emailConfirmed: false,
+      followers: [],
+      following: [],
     });
+
+    const createdUser: IUser | null = await User.findById(createdUserDoc._id);
+
+    if (!createdUser) throw { status: 400, message: 'User creation failed.' };
 
     const apiBaseUrl = process.env.API_BASE_URL ?? 'http://localhost:3000';
     const confirmationUrl = `${apiBaseUrl}/auth/confirm-email?token=${emailConfirmationToken}`;
@@ -53,7 +59,7 @@ export class AuthService {
       };
     }
 
-    const existingUser = await User.findOne({
+    const existingUser: IUser | null = await User.findOne({
       emailConfirmationToken,
     });
     if (!existingUser) {
@@ -82,7 +88,7 @@ export class AuthService {
   ): Promise<{ token: string; user: AuthUserDto }> {
     const { identifier, password } = loginDto;
 
-    const existingUser = await User.findOne({
+    const existingUser: IUser | null = await User.findOne({
       $or: [{ email: identifier }, { username: identifier }],
     });
 

@@ -39,4 +39,44 @@ export class UsersService {
       isSelf
     );
   }
+
+  static async toggleFollowUser(
+    authenticatedUserId: string,
+    targetUserId: string
+  ): Promise<boolean> {
+    if (authenticatedUserId === targetUserId)
+      throw { status: 400, message: "You can't follow yourself." };
+
+    const targetUser = await User.findById(targetUserId);
+    const authUser = await User.findById(authenticatedUserId);
+
+    if (!targetUser || !authUser)
+      throw { status: 404, message: 'User not found.' };
+
+    const isFollowing = authUser.following.some(
+      (id) => id.toString() === targetUserId
+    );
+
+    if (isFollowing) {
+      await User.updateOne(
+        { _id: targetUserId },
+        { $pull: { followers: authenticatedUserId } }
+      );
+      await User.updateOne(
+        { _id: authenticatedUserId },
+        { $pull: { following: targetUserId } }
+      );
+    } else {
+      await User.updateOne(
+        { _id: targetUserId },
+        { $addToSet: { followers: authenticatedUserId } }
+      );
+      await User.updateOne(
+        { _id: authenticatedUserId },
+        { $addToSet: { following: targetUserId } }
+      );
+    }
+
+    return isFollowing;
+  }
 }

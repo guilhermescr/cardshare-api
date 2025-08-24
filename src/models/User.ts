@@ -7,6 +7,8 @@ export interface IUser extends Document {
   emailConfirmed: boolean;
   emailConfirmationToken?: string | null;
   password: string;
+  followers: Types.ObjectId[];
+  following: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -41,6 +43,8 @@ const UserSchema = new Schema(
       required: true,
       minLength: 8,
     },
+    followers: [{ type: Types.ObjectId, ref: 'User' }],
+    following: [{ type: Types.ObjectId, ref: 'User' }],
   },
   {
     timestamps: true,
