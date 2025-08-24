@@ -36,7 +36,7 @@ const CardSchema = new Schema(
     visibility: {
       type: String,
       enum: Object.values(CardVisibilityEnum),
-      default: 'public',
+      default: CardVisibilityEnum.public,
     },
     owner: {
       type: Schema.Types.ObjectId,
