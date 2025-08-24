@@ -25,7 +25,7 @@
 
 ### Search & Discovery
 
-- [ ] Full-text search for cards
+- [x] Full-text search for cards
 - [ ] Search with filters (tags, date, author, etc.)
 
 ### File Upload & Media Management
@@ -43,6 +43,7 @@
 - [x] Card bookmarking/favorites
 - [ ] Share card functionality
 - [ ] Activity feed generation
+- [x] User following system
 
 ### Notification System
 
@@ -88,16 +89,13 @@
 
 ### Card Management
 
-- [ ] Card content validation and sanitization
-- [ ] Card versioning/revision history
-- [ ] Card duplication functionality
-- [ ] Bulk card operations
-- [ ] Card templates system
-- [ ] Card scheduling (publish later)
-- [ ] Card expiration dates
-- [ ] Card content types (text, image, video, link)
-- [ ] Rich text content processing
-- [ ] Card metadata management
+- [x] Create new card endpoint
+- [x] Get card by ID
+- [x] Update card content
+- [x] Delete card
+- [x] Get cards with pagination
+- [x] Cursor-based pagination for get cards
+- [x] Card visibility settings (public/private/unlisted)
 
 ### File Upload & Media Management
 
