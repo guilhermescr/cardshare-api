@@ -1,7 +1,12 @@
 import express from 'express';
-import { AuthController } from '../controllers/AuthController';
+import { AuthController } from '../controllers/auth.controller';
+import { AuthService } from '../services/auth.service';
+import { UserRepository } from '../repositories/user.repository';
 
 const router = express.Router();
+
+const authService = new AuthService(new UserRepository());
+const authController = new AuthController(authService);
 
 /**
  * @openapi
@@ -29,7 +34,7 @@ const router = express.Router();
  *       400:
  *         description: Validation error
  */
-router.post('/register', AuthController.register);
+router.post('/register', authController.register.bind(authController));
 
 /**
  * @openapi
@@ -51,7 +56,7 @@ router.post('/register', AuthController.register);
  *       400:
  *         description: Invalid or expired token
  */
-router.get('/confirm-email', AuthController.confirmEmail);
+router.get('/confirm-email', authController.confirmEmail.bind(authController));
 
 /**
  * @openapi
@@ -81,6 +86,6 @@ router.get('/confirm-email', AuthController.confirmEmail);
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login', AuthController.login);
+router.post('/login', authController.login.bind(authController));
 
 export default router;

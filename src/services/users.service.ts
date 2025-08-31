@@ -1,14 +1,16 @@
 import { UserDto, UserRefDto } from '../dtos/user.dto';
-import { UserMapper } from '../mappers/UserMapper';
+import { UserMapper } from '../mappers/user.mapper';
 import { Card, CardVisibilityEnum, ICard } from '../models/Card';
-import { IUser, User } from '../models/User';
+import { UserRepository } from '../repositories/user.repository';
 
 export class UsersService {
-  static async getUserById(
+  constructor(private readonly userRepository: UserRepository) {}
+
+  async getUserById(
     authenticatedUserId: string,
     targetUserId: string
   ): Promise<UserDto> {
-    const foundUser: IUser | null = await User.findById(targetUserId);
+    const foundUser = await this.userRepository.findById(targetUserId);
 
     if (!foundUser) throw { status: 404, message: 'User not found.' };
 
@@ -31,11 +33,11 @@ export class UsersService {
     const favoritedCards: ICard[] = await Card.find(favoritedQuery);
     const likedCards: ICard[] = await Card.find(likedQuery);
 
-    const followingUsers: IUser[] = await User.find(
+    const followingUsers = await this.userRepository.find(
       { _id: { $in: foundUser.following } },
       '_id username'
     );
-    const followersUsers: IUser[] = await User.find(
+    const followersUsers = await this.userRepository.find(
       { _id: { $in: foundUser.followers } },
       '_id username'
     );
@@ -61,15 +63,15 @@ export class UsersService {
     );
   }
 
-  static async toggleFollowUser(
+  async toggleFollowUser(
     authenticatedUserId: string,
     targetUserId: string
   ): Promise<boolean> {
     if (authenticatedUserId === targetUserId)
       throw { status: 400, message: "You can't follow yourself." };
 
-    const targetUser = await User.findById(targetUserId);
-    const authUser = await User.findById(authenticatedUserId);
+    const targetUser = await this.userRepository.findById(targetUserId);
+    const authUser = await this.userRepository.findById(authenticatedUserId);
 
     if (!targetUser || !authUser)
       throw { status: 404, message: 'User not found.' };
@@ -79,20 +81,20 @@ export class UsersService {
     );
 
     if (isFollowing) {
-      await User.updateOne(
+      await this.userRepository.updateOne(
         { _id: targetUserId },
         { $pull: { followers: authenticatedUserId } }
       );
-      await User.updateOne(
+      await this.userRepository.updateOne(
         { _id: authenticatedUserId },
         { $pull: { following: targetUserId } }
       );
     } else {
-      await User.updateOne(
+      await this.userRepository.updateOne(
         { _id: targetUserId },
         { $addToSet: { followers: authenticatedUserId } }
       );
-      await User.updateOne(
+      await this.userRepository.updateOne(
         { _id: authenticatedUserId },
         { $addToSet: { following: targetUserId } }
       );

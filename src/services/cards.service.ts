@@ -1,12 +1,15 @@
 import mongoose, { RootFilterQuery, Types } from 'mongoose';
 import { CardDto, CreateCardDto, UpdateCardDto } from '../dtos/card.dto';
-import { Card, CardVisibilityEnum, ICard } from '../models/Card';
-import { CardMapper } from '../mappers/CardMapper';
+import { CardVisibilityEnum, ICard } from '../models/Card';
+import { CardMapper } from '../mappers/card.mapper';
 import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 import { User } from '../models/User';
+import { CardRepository } from '../repositories/card.repository';
 
 export class CardsService {
-  static async getCardsCursor(
+  constructor(private readonly cardRepository: CardRepository) {}
+
+  async getCardsCursor(
     authenticatedUserId: string,
     limit: number,
     cursor?: string,
@@ -44,10 +47,10 @@ export class CardsService {
       ];
     }
 
-    const cards: ICard[] = await Card.find(query)
-      .sort({ _id: 1 })
-      .limit(limit + 1)
-      .populate('owner', 'username');
+    const cards: ICard[] = await this.cardRepository.find(query, {
+      sort: { _id: 1 },
+      limit: limit + 1,
+    });
 
     const items = CardMapper.toDtoArray(cards.slice(0, limit));
     const hasNext = cards.length > limit;
@@ -59,71 +62,70 @@ export class CardsService {
     };
   }
 
-  static async findCardById(
+  async findCardById(
     authenticatedUserId: string,
     cardId: string
   ): Promise<CardDto | null> {
-    const card = await Card.findOne({
+    const query = {
       _id: cardId,
       $or: [
         { visibility: CardVisibilityEnum.public },
         { owner: authenticatedUserId },
         { visibility: CardVisibilityEnum.unlisted },
       ],
-    }).populate('owner', 'username');
+    };
+    const card = await this.cardRepository.findOne(query);
 
     return card ? CardMapper.toDto(card) : null;
   }
 
-  static async createCard(
+  async createCard(
     authenticatedUserId: string,
     createCardDto: CreateCardDto
   ): Promise<CardDto | null> {
-    const card = new Card({
+    const card = await this.cardRepository.create({
       ...createCardDto,
-      owner: authenticatedUserId,
+      owner: new Types.ObjectId(authenticatedUserId),
     });
-    const savedCard: ICard = await card.save();
 
-    return savedCard ? CardMapper.toDto(savedCard) : null;
+    return card ? CardMapper.toDto(card) : null;
   }
 
-  static async updateCard(
+  async updateCard(
     authenticatedUserId: string,
     cardId: string,
     updateCardDto: UpdateCardDto
   ): Promise<CardDto | null> {
-    const card: ICard | null = await Card.findOneAndUpdate(
-      {
-        _id: cardId,
-        owner: authenticatedUserId,
-      },
-      updateCardDto,
-      {
-        new: true,
-      }
+    const query = {
+      _id: cardId,
+      owner: authenticatedUserId,
+    };
+    const card = await this.cardRepository.findOneAndUpdate(
+      query,
+      updateCardDto
     );
 
     return card ? CardMapper.toDto(card) : null;
   }
 
-  static async deleteCard(
+  async deleteCard(
     authenticatedUserId: string,
     cardId: string
   ): Promise<CardDto | null> {
-    const result: ICard | null = await Card.findOneAndDelete({
+    const query = {
       _id: cardId,
       owner: authenticatedUserId,
-    });
+    };
+    const result = await this.cardRepository.findOneAndDelete(query);
 
     return result ? CardMapper.toDto(result) : null;
   }
 
-  static async toggleLikeCard(
+  async toggleLikeCard(
     authenticatedUserId: string,
     cardId: string
   ): Promise<CardDto | null> {
-    const card: ICard | null = await Card.findById(cardId);
+    const card = await this.cardRepository.findById(cardId);
     if (!card) throw { status: 404, message: 'Card not found.' };
 
     const userObjectId = new mongoose.Types.ObjectId(authenticatedUserId);
@@ -138,21 +140,15 @@ export class CardsService {
       updateDto = { $addToSet: { likes: userObjectId } };
     }
 
-    const updatedCard: ICard | null = await Card.findByIdAndUpdate(
-      cardId,
-      updateDto,
-      {
-        new: true,
-      }
-    );
+    const updatedCard = await this.cardRepository.update(cardId, updateDto);
     return updatedCard ? CardMapper.toDto(updatedCard) : null;
   }
 
-  static async toggleFavoriteCard(
+  async toggleFavoriteCard(
     authenticatedUserId: string,
     cardId: string
   ): Promise<CardDto | null> {
-    const card: ICard | null = await Card.findById(cardId);
+    const card = await this.cardRepository.findById(cardId);
     if (!card) throw { status: 404, message: 'Card not found.' };
 
     const userObjectId = new mongoose.Types.ObjectId(authenticatedUserId);
@@ -167,13 +163,7 @@ export class CardsService {
       updateDto = { $addToSet: { favorites: userObjectId } };
     }
 
-    const updatedCard: ICard | null = await Card.findByIdAndUpdate(
-      cardId,
-      updateDto,
-      {
-        new: true,
-      }
-    );
+    const updatedCard = await this.cardRepository.update(cardId, updateDto);
     return updatedCard ? CardMapper.toDto(updatedCard) : null;
   }
 }

@@ -1,9 +1,11 @@
 import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../types/auth';
-import { UsersService } from '../services/UsersService';
+import { UsersService } from '../services/users.service';
 
 export class UsersController {
-  static async getUserById(
+  constructor(private readonly usersService: UsersService) {}
+
+  async getUserById(
     req: AuthenticatedRequest,
     res: Response,
     next: NextFunction
@@ -13,7 +15,7 @@ export class UsersController {
       if (!authenticatedUserId)
         throw { status: 401, message: 'User not authenticated.' };
       const targetUserId = req.params.id;
-      const user = await UsersService.getUserById(
+      const user = await this.usersService.getUserById(
         authenticatedUserId,
         targetUserId
       );
@@ -23,7 +25,7 @@ export class UsersController {
     }
   }
 
-  static async toggleFollowUser(
+  async toggleFollowUser(
     req: AuthenticatedRequest,
     res: Response,
     next: NextFunction
@@ -33,7 +35,7 @@ export class UsersController {
       if (!authenticatedUserId)
         throw { status: 401, message: 'User not authenticated.' };
       const targetUserId = req.params.id;
-      const isFollowing = await UsersService.toggleFollowUser(
+      const isFollowing = await this.usersService.toggleFollowUser(
         authenticatedUserId,
         targetUserId
       );

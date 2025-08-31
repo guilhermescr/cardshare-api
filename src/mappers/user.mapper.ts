@@ -1,7 +1,7 @@
 import { UserDto, UserRefDto } from '../dtos/user.dto';
 import { ICard } from '../models/Card';
 import { IUser } from '../models/User';
-import { CardMapper } from './CardMapper';
+import { CardMapper } from './card.mapper';
 
 export class UserMapper {
   static toDto(

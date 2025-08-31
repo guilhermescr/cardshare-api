@@ -61,4 +61,4 @@ const CardSchema = new Schema(
   }
 );
 
-export const Card = mongoose.model('Card', CardSchema);
+export const Card = mongoose.model<ICard>('Card', CardSchema);

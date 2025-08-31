@@ -1,27 +1,25 @@
 import { NextFunction, Request, Response } from 'express';
-import { AuthService } from '../services/AuthService';
+import { AuthService } from '../services/auth.service';
 import { LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { ClassValidator } from '../utils/ClassValidator';
 
 export class AuthController {
-  static async register({ body }: Request, res: Response, next: NextFunction) {
+  constructor(private readonly authService: AuthService) {}
+
+  async register({ body }: Request, res: Response, next: NextFunction) {
     try {
       const registerDto = await ClassValidator.validate(RegisterDto, body);
-      const user = await AuthService.register(registerDto);
+      const user = await this.authService.register(registerDto);
       return res.status(201).json({ user });
     } catch (error: any) {
       next(error);
     }
   }
 
-  static async confirmEmail(
-    { query }: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async confirmEmail({ query }: Request, res: Response, next: NextFunction) {
     try {
       const token = query.token as string;
-      await AuthService.confirmEmail(token);
+      await this.authService.confirmEmail(token);
       return res.status(200).send(`
       <html>
         <head>
@@ -46,10 +44,10 @@ export class AuthController {
     }
   }
 
-  static async login({ body }: Request, res: Response, next: NextFunction) {
+  async login({ body }: Request, res: Response, next: NextFunction) {
     try {
       const loginDto = await ClassValidator.validate(LoginDto, body);
-      const result = await AuthService.login(loginDto);
+      const result = await this.authService.login(loginDto);
       return res.status(200).json(result);
     } catch (error: any) {
       next(error);

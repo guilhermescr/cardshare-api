@@ -1,17 +1,19 @@
 import jwt from 'jsonwebtoken';
 import { compare, hash } from 'bcrypt';
-import { IUser, User } from '../models/User';
 import { JwtExpiresIn } from '../constants/jwt';
 import { AuthUserDto, LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { randomBytes } from 'crypto';
-import { sendEmail } from './EmailService';
-import { AuthMapper } from '../mappers/AuthMapper';
+import { sendEmail } from './email.service';
+import { AuthMapper } from '../mappers/auth.mapper';
+import { UserRepository } from '../repositories/user.repository';
 
 export class AuthService {
-  static async register(registerDto: RegisterDto): Promise<AuthUserDto> {
+  constructor(private readonly userRepository: UserRepository) {}
+
+  async register(registerDto: RegisterDto): Promise<AuthUserDto> {
     const { username, email, password } = registerDto;
 
-    const existingUser: IUser | null = await User.findOne({
+    const existingUser = await this.userRepository.findOne({
       $or: [{ email }, { username }],
     });
     if (existingUser)
@@ -22,7 +24,7 @@ export class AuthService {
 
     const emailConfirmationToken = randomBytes(32).toString('hex');
 
-    const createdUserDoc = await User.create({
+    const createdUserDoc = await this.userRepository.create({
       username,
       email,
       password: hashedPassword,
@@ -32,7 +34,9 @@ export class AuthService {
       following: [],
     });
 
-    const createdUser: IUser | null = await User.findById(createdUserDoc._id);
+    const createdUser = await this.userRepository.findById(
+      String(createdUserDoc._id)
+    );
 
     if (!createdUser) throw { status: 400, message: 'User creation failed.' };
 
@@ -49,9 +53,7 @@ export class AuthService {
     return AuthMapper.toAuthUserDto(createdUser);
   }
 
-  static async confirmEmail(
-    emailConfirmationToken: string
-  ): Promise<AuthUserDto> {
+  async confirmEmail(emailConfirmationToken: string): Promise<AuthUserDto> {
     if (!emailConfirmationToken) {
       throw {
         status: 400,
@@ -59,7 +61,7 @@ export class AuthService {
       };
     }
 
-    const existingUser: IUser | null = await User.findOne({
+    const existingUser = await this.userRepository.findOne({
       emailConfirmationToken,
     });
     if (!existingUser) {
@@ -83,12 +85,12 @@ export class AuthService {
     return AuthMapper.toAuthUserDto(existingUser);
   }
 
-  static async login(
+  async login(
     loginDto: LoginDto
   ): Promise<{ token: string; user: AuthUserDto }> {
     const { identifier, password } = loginDto;
 
-    const existingUser: IUser | null = await User.findOne({
+    const existingUser = await this.userRepository.findOne({
       $or: [{ email: identifier }, { username: identifier }],
     });
 
