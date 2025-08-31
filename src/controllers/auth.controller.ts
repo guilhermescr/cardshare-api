@@ -1,26 +1,37 @@
-import { NextFunction, Request, Response } from 'express';
+import {
+  Route,
+  Post,
+  Get,
+  Body,
+  Query,
+  SuccessResponse,
+  Response,
+  Tags,
+  Controller,
+} from 'tsoa';
 import { AuthService } from '../services/auth.service';
 import { LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { ClassValidator } from '../utils/ClassValidator';
 
-export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+@Route('auth')
+@Tags('Authentication')
+export class AuthController extends Controller {
+  private authService = new AuthService();
 
-  async register({ body }: Request, res: Response, next: NextFunction) {
-    try {
-      const registerDto = await ClassValidator.validate(RegisterDto, body);
-      const user = await this.authService.register(registerDto);
-      return res.status(201).json({ user });
-    } catch (error: any) {
-      next(error);
-    }
+  @SuccessResponse(201, 'User registered successfully')
+  @Response(400, 'Validation error')
+  @Post('register')
+  public async register(@Body() body: RegisterDto): Promise<{ user: any }> {
+    const registerDto = await ClassValidator.validate(RegisterDto, body);
+    const user = await this.authService.register(registerDto);
+    this.setStatus(201);
+    return { user };
   }
 
-  async confirmEmail({ query }: Request, res: Response, next: NextFunction) {
-    try {
-      const token = query.token as string;
-      await this.authService.confirmEmail(token);
-      return res.status(200).send(`
+  @Get('confirm-email')
+  public async confirmEmail(@Query() token: string): Promise<string> {
+    await this.authService.confirmEmail(token);
+    return `
       <html>
         <head>
           <title>Email Confirmed</title>
@@ -38,19 +49,12 @@ export class AuthController {
           </div>
         </body>
       </html>
-    `);
-    } catch (error: any) {
-      next(error);
-    }
+    `;
   }
 
-  async login({ body }: Request, res: Response, next: NextFunction) {
-    try {
-      const loginDto = await ClassValidator.validate(LoginDto, body);
-      const result = await this.authService.login(loginDto);
-      return res.status(200).json(result);
-    } catch (error: any) {
-      next(error);
-    }
+  @Post('login')
+  public async login(@Body() body: LoginDto): Promise<any> {
+    const loginDto = await ClassValidator.validate(LoginDto, body);
+    return await this.authService.login(loginDto);
   }
 }

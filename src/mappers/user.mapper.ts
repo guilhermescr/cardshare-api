@@ -17,11 +17,11 @@ export class UserMapper {
       id: user._id.toString(),
       username: user.username,
       email: includeEmail ? user.email : undefined,
+      following,
+      followers,
       cards: CardMapper.toDtoArray(cards),
       favorites: CardMapper.toDtoArray(favorites),
       likes: CardMapper.toDtoArray(likes),
-      following,
-      followers,
     };
   }
 }

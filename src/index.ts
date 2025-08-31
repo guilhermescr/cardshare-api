@@ -1,19 +1,18 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth';
-import usersRoutes from './routes/users';
-import cardsRoutes from './routes/cards';
 import { errorHandler } from './middlewares/errorHandler';
 import { setupSwagger } from './swagger';
+import { RegisterRoutes } from './routes';
+import { authMiddleware } from './middlewares/authMiddleware';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use('/auth', authRoutes);
-app.use('/users', usersRoutes);
-app.use('/cards', cardsRoutes);
+app.use('/users', authMiddleware);
+app.use('/cards', authMiddleware);
+RegisterRoutes(app);
 
 setupSwagger(app);
 

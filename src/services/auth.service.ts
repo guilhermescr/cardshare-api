@@ -8,7 +8,7 @@ import { AuthMapper } from '../mappers/auth.mapper';
 import { UserRepository } from '../repositories/user.repository';
 
 export class AuthService {
-  constructor(private readonly userRepository: UserRepository) {}
+  private userRepository = new UserRepository();
 
   async register(registerDto: RegisterDto): Promise<AuthUserDto> {
     const { username, email, password } = registerDto;

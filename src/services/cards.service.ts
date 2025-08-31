@@ -7,7 +7,7 @@ import { User } from '../models/User';
 import { CardRepository } from '../repositories/card.repository';
 
 export class CardsService {
-  constructor(private readonly cardRepository: CardRepository) {}
+  private cardRepository = new CardRepository();
 
   async getCardsCursor(
     authenticatedUserId: string,
