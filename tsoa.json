@@ -1,0 +1,17 @@
+{
+  "entryFile": "src/index.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/controllers/*.ts"],
+  "spec": {
+    "outputDirectory": "src",
+    "specVersion": 3,
+    "securityDefinitions": {},
+    "specFileBaseName": "swagger",
+    "title": "CardShare API",
+    "version": "1.0.0",
+    "description": "CardShare API with Express."
+  },
+  "routes": {
+    "routesDir": "src"
+  }
+}

@@ -1,171 +1,140 @@
-import { NextFunction, Response } from 'express';
+import {
+  Route,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Query,
+  Path,
+  Request,
+  SuccessResponse,
+  Response,
+  Tags,
+  Security,
+  Controller,
+} from 'tsoa';
 import { CardsService } from '../services/cards.service';
+import { CreateCardDto, UpdateCardDto, CardDto } from '../dtos/card.dto';
+import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
+import { Request as ExpressRequest } from 'express';
 import { AuthenticatedRequest } from '../types/auth';
-import { ClassValidator } from '../utils/ClassValidator';
-import { CreateCardDto, UpdateCardDto } from '../dtos/card.dto';
 
-export class CardsController {
-  constructor(private readonly cardsService: CardsService) {}
+@Route('cards')
+@Tags('Cards')
+@Security('jwt')
+export class CardsController extends Controller {
+  private cardsService = new CardsService();
 
-  async getCards(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-    try {
-      const authenticatedUserId = req.user?.id;
-      if (!authenticatedUserId)
-        throw { status: 401, message: 'User not authenticated.' };
+  @Get('/')
+  public async getCards(
+    @Request() req: ExpressRequest,
+    @Query() limit?: number,
+    @Query() cursor?: string,
+    @Query() search?: string
+  ): Promise<PaginatedResponseDto<CardDto>> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
 
-      const defaultLimit = 10;
-      const limit = parseInt(req.query.limit as string) || defaultLimit;
-      const cursor = req.query.cursor as string | undefined;
-      const search = req.query.search
-        ? (req.query.search as string).trim()
-        : undefined;
-
-      const response = await this.cardsService.getCardsCursor(
-        authenticatedUserId,
-        limit,
-        cursor,
-        search
-      );
-      return res.status(200).json({ ...response });
-    } catch (error: any) {
-      next(error);
-    }
+    return await this.cardsService.getCardsCursor(
+      authenticatedUserId,
+      limit ?? 10,
+      cursor,
+      search
+    );
   }
 
-  async getCardById(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const authenticatedUserId = req.user?.id;
-      if (!authenticatedUserId)
-        throw { status: 401, message: 'User not authenticated.' };
+  @Get('{id}')
+  @Response(404, 'Card not found')
+  public async getCardById(
+    @Request() req: ExpressRequest,
+    @Path() id: string
+  ): Promise<CardDto | null> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
 
-      const cardId = req.params.id;
-      const card = await this.cardsService.findCardById(
-        authenticatedUserId,
-        cardId
-      );
-      if (!card) throw { status: 404, message: 'Card not found.' };
-
-      return res.status(200).json({ card });
-    } catch (error: any) {
-      next(error);
-    }
+    const card = await this.cardsService.findCardById(authenticatedUserId, id);
+    if (!card) throw { status: 404, message: 'Card not found.' };
+    return card;
   }
 
-  async createCard(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const authenticatedUserId = req.user?.id;
-      if (!authenticatedUserId)
-        throw { status: 401, message: 'User not authenticated.' };
+  @SuccessResponse(201, 'Card created')
+  @Post('/')
+  public async createCard(
+    @Request() req: ExpressRequest,
+    @Body() body: CreateCardDto
+  ): Promise<CardDto | null> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
 
-      const createCardDto = await ClassValidator.validate(
-        CreateCardDto,
-        req.body
-      );
-      const card = await this.cardsService.createCard(
-        authenticatedUserId,
-        createCardDto
-      );
-      return res.status(201).json({ card });
-    } catch (error: any) {
-      next(error);
-    }
+    const card = await this.cardsService.createCard(authenticatedUserId, body);
+    this.setStatus(201);
+    return card;
   }
 
-  async updateCard(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const authenticatedUserId = req.user?.id;
-      if (!authenticatedUserId)
-        throw { status: 401, message: 'User not authenticated.' };
+  @Put('{id}')
+  @Response(404, 'Card not found')
+  public async updateCard(
+    @Request() req: ExpressRequest,
+    @Path() id: string,
+    @Body() body: UpdateCardDto
+  ): Promise<CardDto | null> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
 
-      const cardId = req.params.id;
-      const updateCardDto = await ClassValidator.validate(
-        UpdateCardDto,
-        req.body
-      );
-      const card = await this.cardsService.updateCard(
-        authenticatedUserId,
-        cardId,
-        updateCardDto
-      );
-      if (!card) throw { status: 404, message: 'Card not found.' };
-      return res.status(200).json({ card });
-    } catch (error: any) {
-      next(error);
-    }
+    const card = await this.cardsService.updateCard(
+      authenticatedUserId,
+      id,
+      body
+    );
+    if (!card) throw { status: 404, message: 'Card not found.' };
+    return card;
   }
 
-  async deleteCard(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const authenticatedUserId = req.user?.id;
-      if (!authenticatedUserId)
-        throw { status: 401, message: 'User not authenticated.' };
+  @Delete('{id}')
+  @SuccessResponse(204, 'Card deleted')
+  @Response(404, 'Card not found')
+  public async deleteCard(
+    @Request() req: ExpressRequest,
+    @Path() id: string
+  ): Promise<void> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
 
-      const cardId = req.params.id;
-      const deletedCard = await this.cardsService.deleteCard(
-        authenticatedUserId,
-        cardId
-      );
-      if (!deletedCard) throw { status: 404, message: 'Card not found.' };
-      return res.status(204).send();
-    } catch (error: any) {
-      next(error);
-    }
+    const deletedCard = await this.cardsService.deleteCard(
+      authenticatedUserId,
+      id
+    );
+    if (!deletedCard) throw { status: 404, message: 'Card not found.' };
+    this.setStatus(204);
   }
 
-  async toggleLikeCard(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const authenticatedUserId = req.user?.id;
-      if (!authenticatedUserId)
-        throw { status: 401, message: 'User not authorized.' };
+  @Post('{id}/like')
+  public async toggleLikeCard(
+    @Request() req: ExpressRequest,
+    @Path() id: string
+  ): Promise<CardDto | null> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
 
-      const cardId = req.params.id;
-      const card = await this.cardsService.toggleLikeCard(
-        authenticatedUserId,
-        cardId
-      );
-      return res.status(200).json({ card });
-    } catch (error: any) {
-      next(error);
-    }
+    return await this.cardsService.toggleLikeCard(authenticatedUserId, id);
   }
-  async toggleFavoriteCard(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const authenticatedUserId = req.user?.id;
-      if (!authenticatedUserId)
-        throw { status: 401, message: 'User not authorized.' };
 
-      const cardId = req.params.id;
-      const card = await this.cardsService.toggleFavoriteCard(
-        authenticatedUserId,
-        cardId
-      );
-      return res.status(200).json({ card });
-    } catch (error: any) {
-      next(error);
-    }
+  @Post('{id}/favorite')
+  public async toggleFavoriteCard(
+    @Request() req: ExpressRequest,
+    @Path() id: string
+  ): Promise<CardDto | null> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
+
+    return await this.cardsService.toggleFavoriteCard(authenticatedUserId, id);
   }
 }

@@ -4,7 +4,7 @@ import { Card, CardVisibilityEnum, ICard } from '../models/Card';
 import { UserRepository } from '../repositories/user.repository';
 
 export class UsersService {
-  constructor(private readonly userRepository: UserRepository) {}
+  private userRepository = new UserRepository();
 
   async getUserById(
     authenticatedUserId: string,

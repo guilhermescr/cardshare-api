@@ -1,47 +1,52 @@
-import { Response, NextFunction } from 'express';
-import { AuthenticatedRequest } from '../types/auth';
+import {
+  Route,
+  Get,
+  Post,
+  Path,
+  Request,
+  Response,
+  Tags,
+  Security,
+  Controller,
+} from 'tsoa';
 import { UsersService } from '../services/users.service';
+import { AuthenticatedRequest } from '../types/auth';
+import { Request as ExpressRequest } from 'express';
 
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+@Route('users')
+@Tags('Users')
+@Security('jwt')
+export class UsersController extends Controller {
+  private usersService = new UsersService();
 
-  async getUserById(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const authenticatedUserId = req.user?.id;
-      if (!authenticatedUserId)
-        throw { status: 401, message: 'User not authenticated.' };
-      const targetUserId = req.params.id;
-      const user = await this.usersService.getUserById(
-        authenticatedUserId,
-        targetUserId
-      );
-      return res.status(200).json({ user });
-    } catch (error: any) {
-      next(error);
-    }
+  @Get('{id}')
+  @Response(401, 'User not authenticated')
+  @Response(404, 'User not found')
+  public async getUserById(
+    @Request() req: ExpressRequest,
+    @Path() id: string
+  ): Promise<{ user: any }> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
+    const user = await this.usersService.getUserById(authenticatedUserId, id);
+    if (!user) throw { status: 404, message: 'User not found.' };
+    return { user };
   }
 
-  async toggleFollowUser(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const authenticatedUserId = req.user?.id;
-      if (!authenticatedUserId)
-        throw { status: 401, message: 'User not authenticated.' };
-      const targetUserId = req.params.id;
-      const isFollowing = await this.usersService.toggleFollowUser(
-        authenticatedUserId,
-        targetUserId
-      );
-      return res.status(200).json({ following: isFollowing });
-    } catch (error: any) {
-      next(error);
-    }
+  @Post('{id}/follow')
+  @Response(401, 'User not authenticated')
+  public async toggleFollowUser(
+    @Request() req: ExpressRequest,
+    @Path() id: string
+  ): Promise<{ following: boolean }> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
+    const isFollowing = await this.usersService.toggleFollowUser(
+      authenticatedUserId,
+      id
+    );
+    return { following: isFollowing };
   }
 }
