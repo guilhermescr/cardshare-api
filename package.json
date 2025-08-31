@@ -1,5 +1,5 @@
 {
-  "name": "cards-api",
+  "name": "cardshare-api",
   "version": "1.0.0",
   "description": "CardShare API with Express.",
   "type": "module",
@@ -22,7 +22,9 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.18.0",
     "mongoose": "^8.16.5",
-    "nodemailer": "^7.0.5"
+    "nodemailer": "^7.0.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
@@ -32,6 +34,8 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^24.1.0",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
     "eslint": "^9.32.0",

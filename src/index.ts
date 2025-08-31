@@ -5,6 +5,7 @@ import authRoutes from './routes/auth';
 import usersRoutes from './routes/users';
 import cardsRoutes from './routes/cards';
 import { errorHandler } from './middlewares/errorHandler';
+import { setupSwagger } from './swagger';
 
 dotenv.config();
 
@@ -13,6 +14,8 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
 app.use('/cards', cardsRoutes);
+
+setupSwagger(app);
 
 app.use(errorHandler);
 
