@@ -6,11 +6,11 @@ export class UserRepository {
   }
 
   async findById(userId: string): Promise<IUser | null> {
-    return User.findById(userId);
+    return User.findById(userId).exec();
   }
 
   async findOne(query: any): Promise<IUser | null> {
-    return User.findOne(query);
+    return User.findOne(query).exec();
   }
 
   async create(data: Partial<IUser>): Promise<IUser> {
