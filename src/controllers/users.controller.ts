@@ -29,7 +29,11 @@ export class UsersController extends Controller {
     const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
     if (!authenticatedUserId)
       throw { status: 401, message: 'User not authenticated.' };
-    const user = await this.usersService.getUserById(authenticatedUserId, id);
+    const targetId = id === 'me' ? authenticatedUserId : id;
+    const user = await this.usersService.getUserById(
+      authenticatedUserId,
+      targetId
+    );
     if (!user) throw { status: 404, message: 'User not found.' };
     return { user };
   }
