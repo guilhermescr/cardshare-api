@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import { errorHandler } from './middlewares/errorHandler';
 import { setupSwagger } from './swagger';
 import { RegisterRoutes } from './routes';
@@ -10,6 +11,11 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+  })
+);
 app.use('/users', authMiddleware);
 app.use('/cards', authMiddleware);
 RegisterRoutes(app);
