@@ -63,7 +63,8 @@ export class UsersController extends Controller {
   public async getMyCards(
     @Request() req: ExpressRequest,
     @Query() limit?: number,
-    @Query() cursor?: string
+    @Query() cursor?: string,
+    @Query() sortBy?: 'latest' | 'most-liked'
   ): Promise<PaginatedResponseDto<CardDto>> {
     const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
     if (!authenticatedUserId)
@@ -72,7 +73,8 @@ export class UsersController extends Controller {
     return await this.cardsService.getMyCardsCursor(
       authenticatedUserId,
       limit ?? 9,
-      cursor
+      cursor,
+      sortBy
     );
   }
 
@@ -80,7 +82,8 @@ export class UsersController extends Controller {
   public async getMyLikedCards(
     @Request() req: ExpressRequest,
     @Query() limit?: number,
-    @Query() cursor?: string
+    @Query() cursor?: string,
+    @Query() sortBy?: 'latest' | 'most-liked'
   ): Promise<PaginatedResponseDto<CardDto>> {
     const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
     if (!authenticatedUserId)
@@ -89,7 +92,8 @@ export class UsersController extends Controller {
     return await this.cardsService.getLikedCardsCursor(
       authenticatedUserId,
       limit ?? 9,
-      cursor
+      cursor,
+      sortBy
     );
   }
 }

@@ -84,7 +84,8 @@ export class CardsService {
   async getMyCardsCursor(
     authenticatedUserId: string,
     limit: number,
-    cursor?: string
+    cursor?: string,
+    sortBy?: 'latest' | 'most-liked'
   ): Promise<PaginatedResponseDto<CardDto>> {
     const query: RootFilterQuery<ICard> = {
       owner: new Types.ObjectId(authenticatedUserId),
@@ -94,18 +95,33 @@ export class CardsService {
       query._id = { $lt: new Types.ObjectId(cursor) };
     }
 
-    const cards: ICard[] = await this.cardRepository.find(query, {
-      sort: { _id: -1 },
-      limit: limit + 1,
-    });
-
-    return paginateCards(cards, limit);
+    if (sortBy === 'most-liked') {
+      const pipeline: any[] = [
+        { $match: query },
+        {
+          $addFields: {
+            likesCount: { $size: { $ifNull: ['$likes', []] } },
+          },
+        },
+        { $sort: { likesCount: -1, _id: -1 } },
+        { $limit: limit + 1 },
+      ];
+      const cards: ICard[] = await this.cardRepository.aggregate(pipeline);
+      return paginateCards(cards, limit);
+    } else {
+      const cards: ICard[] = await this.cardRepository.find(query, {
+        sort: { _id: -1 },
+        limit: limit + 1,
+      });
+      return paginateCards(cards, limit);
+    }
   }
 
   async getLikedCardsCursor(
     authenticatedUserId: string,
     limit: number,
-    cursor?: string
+    cursor?: string,
+    sortBy?: 'latest' | 'most-liked'
   ): Promise<PaginatedResponseDto<CardDto>> {
     const query: RootFilterQuery<ICard> = {
       likes: new Types.ObjectId(authenticatedUserId),
@@ -116,12 +132,26 @@ export class CardsService {
       query._id = { $lt: new Types.ObjectId(cursor) };
     }
 
-    const cards: ICard[] = await this.cardRepository.find(query, {
-      sort: { _id: -1 },
-      limit: limit + 1,
-    });
-
-    return paginateCards(cards, limit);
+    if (sortBy === 'most-liked') {
+      const pipeline: any[] = [
+        { $match: query },
+        {
+          $addFields: {
+            likesCount: { $size: { $ifNull: ['$likes', []] } },
+          },
+        },
+        { $sort: { likesCount: -1, _id: -1 } },
+        { $limit: limit + 1 },
+      ];
+      const cards: ICard[] = await this.cardRepository.aggregate(pipeline);
+      return paginateCards(cards, limit);
+    } else {
+      const cards: ICard[] = await this.cardRepository.find(query, {
+        sort: { _id: -1 },
+        limit: limit + 1,
+      });
+      return paginateCards(cards, limit);
+    }
   }
 
   async findCardById(
