@@ -31,7 +31,8 @@ export class CardsController extends Controller {
     @Request() req: ExpressRequest,
     @Query() limit?: number,
     @Query() cursor?: string,
-    @Query() search?: string
+    @Query() search?: string,
+    @Query() sortBy?: 'latest' | 'most-liked'
   ): Promise<PaginatedResponseDto<CardDto>> {
     const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
     if (!authenticatedUserId)
@@ -39,9 +40,10 @@ export class CardsController extends Controller {
 
     return await this.cardsService.getCardsCursor(
       authenticatedUserId,
-      limit ?? 10,
+      limit ?? 9,
       cursor,
-      search
+      search,
+      sortBy
     );
   }
 

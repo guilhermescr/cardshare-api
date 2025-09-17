@@ -221,6 +221,98 @@ export function RegisterRoutes(app: Router) {
     }
   );
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUsersController_getMyCards: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    limit: { in: 'query', name: 'limit', dataType: 'double' },
+    cursor: { in: 'query', name: 'cursor', dataType: 'string' },
+  };
+  app.get(
+    '/users/me/cards',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UsersController),
+    ...fetchMiddlewares<RequestHandler>(UsersController.prototype.getMyCards),
+
+    async function UsersController_getMyCards(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUsersController_getMyCards,
+          request,
+          response,
+        });
+
+        const controller = new UsersController();
+
+        await templateService.apiHandler({
+          methodName: 'getMyCards',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUsersController_getMyLikedCards: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    limit: { in: 'query', name: 'limit', dataType: 'double' },
+    cursor: { in: 'query', name: 'cursor', dataType: 'string' },
+  };
+  app.get(
+    '/users/me/liked',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UsersController),
+    ...fetchMiddlewares<RequestHandler>(
+      UsersController.prototype.getMyLikedCards
+    ),
+
+    async function UsersController_getMyLikedCards(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUsersController_getMyLikedCards,
+          request,
+          response,
+        });
+
+        const controller = new UsersController();
+
+        await templateService.apiHandler({
+          methodName: 'getMyLikedCards',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   const argsCardsController_getCards: Record<
     string,
     TsoaRoute.ParameterSchema
@@ -229,6 +321,15 @@ export function RegisterRoutes(app: Router) {
     limit: { in: 'query', name: 'limit', dataType: 'double' },
     cursor: { in: 'query', name: 'cursor', dataType: 'string' },
     search: { in: 'query', name: 'search', dataType: 'string' },
+    sortBy: {
+      in: 'query',
+      name: 'sortBy',
+      dataType: 'union',
+      subSchemas: [
+        { dataType: 'enum', enums: ['latest'] },
+        { dataType: 'enum', enums: ['most-liked'] },
+      ],
+    },
   };
   app.get(
     '/cards',

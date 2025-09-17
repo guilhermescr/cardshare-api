@@ -8,16 +8,21 @@ import {
   Tags,
   Security,
   Controller,
+  Query,
 } from 'tsoa';
 import { UsersService } from '../services/users.service';
 import { AuthenticatedRequest } from '../types/auth';
 import { Request as ExpressRequest } from 'express';
+import { CardsService } from '../services/cards.service';
+import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
+import { CardDto } from '../dtos/card.dto';
 
 @Route('users')
 @Tags('Users')
 @Security('jwt')
 export class UsersController extends Controller {
   private usersService = new UsersService();
+  private cardsService = new CardsService();
 
   @Get('{id}')
   @Response(401, 'User not authenticated')
@@ -52,5 +57,39 @@ export class UsersController extends Controller {
       id
     );
     return { following: isFollowing };
+  }
+
+  @Get('me/cards')
+  public async getMyCards(
+    @Request() req: ExpressRequest,
+    @Query() limit?: number,
+    @Query() cursor?: string
+  ): Promise<PaginatedResponseDto<CardDto>> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
+
+    return await this.cardsService.getMyCardsCursor(
+      authenticatedUserId,
+      limit ?? 9,
+      cursor
+    );
+  }
+
+  @Get('me/liked')
+  public async getMyLikedCards(
+    @Request() req: ExpressRequest,
+    @Query() limit?: number,
+    @Query() cursor?: string
+  ): Promise<PaginatedResponseDto<CardDto>> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
+
+    return await this.cardsService.getLikedCardsCursor(
+      authenticatedUserId,
+      limit ?? 9,
+      cursor
+    );
   }
 }

@@ -19,6 +19,10 @@ export class CardRepository {
     return cursor.exec();
   }
 
+  async aggregate(pipeline: any[]): Promise<ICard[]> {
+    return Card.aggregate(pipeline);
+  }
+
   async create(data: Partial<ICard>): Promise<ICard> {
     const card = new Card(data);
     return card.save();

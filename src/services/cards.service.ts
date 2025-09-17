@@ -1,10 +1,17 @@
-import mongoose, { RootFilterQuery, Types } from 'mongoose';
+import { RootFilterQuery, Types } from 'mongoose';
 import { CardDto, CreateCardDto, UpdateCardDto } from '../dtos/card.dto';
 import { CardVisibilityEnum, ICard } from '../models/Card';
 import { CardMapper } from '../mappers/card.mapper';
 import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 import { User } from '../models/User';
 import { CardRepository } from '../repositories/card.repository';
+
+function paginateCards(cards: ICard[], limit: number) {
+  const items = CardMapper.toDtoArray(cards.slice(0, limit));
+  const hasNext = cards.length > limit;
+  const nextCursor = hasNext ? items[items.length - 1].id : undefined;
+  return { items, nextCursor };
+}
 
 export class CardsService {
   private cardRepository = new CardRepository();
@@ -13,17 +20,18 @@ export class CardsService {
     authenticatedUserId: string,
     limit: number,
     cursor?: string,
-    search?: string
+    search?: string,
+    sortBy?: 'latest' | 'most-liked'
   ): Promise<PaginatedResponseDto<CardDto>> {
     const query: RootFilterQuery<ICard> = {
       $or: [
         { visibility: CardVisibilityEnum.public },
-        { owner: authenticatedUserId },
+        { owner: new Types.ObjectId(authenticatedUserId) },
       ],
     };
 
     if (cursor) {
-      query._id = { $gt: new Types.ObjectId(cursor) };
+      query._id = { $lt: new Types.ObjectId(cursor) };
     }
 
     if (search) {
@@ -47,19 +55,73 @@ export class CardsService {
       ];
     }
 
+    if (sortBy === 'most-liked') {
+      const pipeline: any[] = [
+        { $match: query },
+        {
+          $addFields: {
+            likesCount: { $size: { $ifNull: ['$likes', []] } },
+          },
+        },
+        { $match: { likesCount: { $gt: 0 } } },
+        { $sort: { likesCount: -1, _id: -1 } },
+        { $limit: limit + 1 },
+      ];
+
+      const cards: ICard[] = await this.cardRepository.aggregate(pipeline);
+      return paginateCards(cards, limit);
+    } else {
+      const sort = { _id: -1 };
+      const cards: ICard[] = await this.cardRepository.find(query, {
+        sort,
+        limit: limit + 1,
+      });
+
+      return paginateCards(cards, limit);
+    }
+  }
+
+  async getMyCardsCursor(
+    authenticatedUserId: string,
+    limit: number,
+    cursor?: string
+  ): Promise<PaginatedResponseDto<CardDto>> {
+    const query: RootFilterQuery<ICard> = {
+      owner: new Types.ObjectId(authenticatedUserId),
+    };
+
+    if (cursor) {
+      query._id = { $lt: new Types.ObjectId(cursor) };
+    }
+
     const cards: ICard[] = await this.cardRepository.find(query, {
-      sort: { _id: 1 },
+      sort: { _id: -1 },
       limit: limit + 1,
     });
 
-    const items = CardMapper.toDtoArray(cards.slice(0, limit));
-    const hasNext = cards.length > limit;
-    const nextCursor = hasNext ? items[items.length - 1].id : undefined;
+    return paginateCards(cards, limit);
+  }
 
-    return {
-      items,
-      nextCursor,
+  async getLikedCardsCursor(
+    authenticatedUserId: string,
+    limit: number,
+    cursor?: string
+  ): Promise<PaginatedResponseDto<CardDto>> {
+    const query: RootFilterQuery<ICard> = {
+      likes: new Types.ObjectId(authenticatedUserId),
+      visibility: CardVisibilityEnum.public,
     };
+
+    if (cursor) {
+      query._id = { $lt: new Types.ObjectId(cursor) };
+    }
+
+    const cards: ICard[] = await this.cardRepository.find(query, {
+      sort: { _id: -1 },
+      limit: limit + 1,
+    });
+
+    return paginateCards(cards, limit);
   }
 
   async findCardById(
@@ -70,7 +132,7 @@ export class CardsService {
       _id: cardId,
       $or: [
         { visibility: CardVisibilityEnum.public },
-        { owner: authenticatedUserId },
+        { owner: new Types.ObjectId(authenticatedUserId) },
         { visibility: CardVisibilityEnum.unlisted },
       ],
     };
@@ -98,7 +160,7 @@ export class CardsService {
   ): Promise<CardDto | null> {
     const query = {
       _id: cardId,
-      owner: authenticatedUserId,
+      owner: new Types.ObjectId(authenticatedUserId),
     };
     const card = await this.cardRepository.findOneAndUpdate(
       query,
@@ -114,7 +176,7 @@ export class CardsService {
   ): Promise<CardDto | null> {
     const query = {
       _id: cardId,
-      owner: authenticatedUserId,
+      owner: new Types.ObjectId(authenticatedUserId),
     };
     const result = await this.cardRepository.findOneAndDelete(query);
 
@@ -128,8 +190,8 @@ export class CardsService {
     const card = await this.cardRepository.findById(cardId);
     if (!card) throw { status: 404, message: 'Card not found.' };
 
-    const userObjectId = new mongoose.Types.ObjectId(authenticatedUserId);
-    const hasLiked = card.likes.some((id: mongoose.Types.ObjectId) =>
+    const userObjectId = new Types.ObjectId(authenticatedUserId);
+    const hasLiked = card.likes.some((id: Types.ObjectId) =>
       id.equals(userObjectId)
     );
 
@@ -151,8 +213,8 @@ export class CardsService {
     const card = await this.cardRepository.findById(cardId);
     if (!card) throw { status: 404, message: 'Card not found.' };
 
-    const userObjectId = new mongoose.Types.ObjectId(authenticatedUserId);
-    const hasFavorited = card.favorites.some((id: mongoose.Types.ObjectId) =>
+    const userObjectId = new Types.ObjectId(authenticatedUserId);
+    const hasFavorited = card.favorites.some((id: Types.ObjectId) =>
       id.equals(userObjectId)
     );
 
