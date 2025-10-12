@@ -1,6 +1,7 @@
 import { UserDto, UserRefDto } from '../dtos/user.dto';
 import { UserMapper } from '../mappers/user.mapper';
-import { Card, CardVisibilityEnum, ICard } from '../models/Card';
+import { Card, CardVisibilityEnum } from '../models/Card';
+import { IUser } from '../models/User';
 import { UserRepository } from '../repositories/user.repository';
 
 export class UsersService {
@@ -15,52 +16,19 @@ export class UsersService {
     if (!foundUser) throw { status: 404, message: 'User not found.' };
 
     const isSelf = authenticatedUserId === targetUserId;
+    return this.buildUserDto(foundUser, isSelf);
+  }
 
-    const cardQuery = isSelf
-      ? { owner: foundUser._id }
-      : { owner: foundUser._id, visibility: CardVisibilityEnum.public };
+  async getUserByUsername(
+    authenticatedUserId: string,
+    username: string
+  ): Promise<UserDto> {
+    const foundUser = await this.userRepository.findOne({ username });
 
-    const foundCards: ICard[] = await Card.find(cardQuery);
+    if (!foundUser) throw { status: 404, message: 'User not found.' };
 
-    const favoritedQuery = isSelf
-      ? { favorites: foundUser._id }
-      : { favorites: foundUser._id, visibility: CardVisibilityEnum.public };
-
-    const likedQuery = isSelf
-      ? { likes: foundUser._id }
-      : { likes: foundUser._id, visibility: CardVisibilityEnum.public };
-
-    const favoritedCards: ICard[] = await Card.find(favoritedQuery);
-    const likedCards: ICard[] = await Card.find(likedQuery);
-
-    const followingUsers = await this.userRepository.find(
-      { _id: { $in: foundUser.following } },
-      '_id username'
-    );
-    const followersUsers = await this.userRepository.find(
-      { _id: { $in: foundUser.followers } },
-      '_id username'
-    );
-
-    const following: UserRefDto[] = followingUsers.map((u) => ({
-      id: u._id.toString(),
-      username: u.username,
-    }));
-
-    const followers: UserRefDto[] = followersUsers.map((u) => ({
-      id: u._id.toString(),
-      username: u.username,
-    }));
-
-    return UserMapper.toDto(
-      foundUser,
-      foundCards,
-      favoritedCards,
-      likedCards,
-      isSelf,
-      following,
-      followers
-    );
+    const isSelf = authenticatedUserId === foundUser._id.toString();
+    return this.buildUserDto(foundUser, isSelf);
   }
 
   async toggleFollowUser(
@@ -101,5 +69,59 @@ export class UsersService {
     }
 
     return !isFollowing;
+  }
+
+  private async buildUserDto(
+    foundUser: IUser,
+    isSelf: boolean
+  ): Promise<UserDto> {
+    const cardQuery = isSelf
+      ? { owner: foundUser._id }
+      : { owner: foundUser._id, visibility: CardVisibilityEnum.public };
+
+    const favoritedQuery = isSelf
+      ? { favorites: foundUser._id }
+      : { favorites: foundUser._id, visibility: CardVisibilityEnum.public };
+
+    const likedQuery = isSelf
+      ? { likes: foundUser._id }
+      : { likes: foundUser._id, visibility: CardVisibilityEnum.public };
+
+    const [foundCards, favoritedCards, likedCards] = await Promise.all([
+      Card.find(cardQuery),
+      Card.find(favoritedQuery),
+      Card.find(likedQuery),
+    ]);
+
+    const [followingUsers, followersUsers] = await Promise.all([
+      this.userRepository.find(
+        { _id: { $in: foundUser.following } },
+        '_id username'
+      ),
+      this.userRepository.find(
+        { _id: { $in: foundUser.followers } },
+        '_id username'
+      ),
+    ]);
+
+    const following: UserRefDto[] = followingUsers.map((u) => ({
+      id: u._id.toString(),
+      username: u.username,
+    }));
+
+    const followers: UserRefDto[] = followersUsers.map((u) => ({
+      id: u._id.toString(),
+      username: u.username,
+    }));
+
+    return UserMapper.toDto(
+      foundUser,
+      foundCards,
+      favoritedCards,
+      likedCards,
+      isSelf,
+      following,
+      followers
+    );
   }
 }

@@ -74,6 +74,84 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"UserRefDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"username"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"fullName": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"bio": {
+						"type": "string"
+					},
+					"cards": {
+						"items": {
+							"$ref": "#/components/schemas/CardDto"
+						},
+						"type": "array"
+					},
+					"favorites": {
+						"items": {
+							"$ref": "#/components/schemas/CardDto"
+						},
+						"type": "array"
+					},
+					"likes": {
+						"items": {
+							"$ref": "#/components/schemas/CardDto"
+						},
+						"type": "array"
+					},
+					"following": {
+						"items": {
+							"$ref": "#/components/schemas/UserRefDto"
+						},
+						"type": "array"
+					},
+					"followers": {
+						"items": {
+							"$ref": "#/components/schemas/UserRefDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"fullName",
+					"username",
+					"bio",
+					"cards",
+					"favorites",
+					"likes",
+					"following",
+					"followers"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"PaginatedResponseDto_CardDto_": {
 				"properties": {
 					"items": {
@@ -133,6 +211,10 @@
 			},
 			"RegisterDto": {
 				"properties": {
+					"fullName": {
+						"type": "string",
+						"example": "John Doe"
+					},
 					"username": {
 						"type": "string",
 						"example": "john_doe"
@@ -147,6 +229,7 @@
 					}
 				},
 				"required": [
+					"fullName",
 					"username",
 					"email",
 					"password"
@@ -195,7 +278,9 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"user": {}
+										"user": {
+											"$ref": "#/components/schemas/UserDto"
+										}
 									},
 									"required": [
 										"user"
@@ -224,6 +309,55 @@
 					{
 						"in": "path",
 						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/username/{username}": {
+			"get": {
+				"operationId": "GetUserByUsername",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"user": {
+											"$ref": "#/components/schemas/UserDto"
+										}
+									},
+									"required": [
+										"user"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "User not authenticated"
+					},
+					"404": {
+						"description": "User not found"
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "username",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -318,6 +452,18 @@
 						"schema": {
 							"type": "string"
 						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"latest",
+								"most-liked"
+							]
+						}
 					}
 				]
 			}
@@ -361,6 +507,18 @@
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"latest",
+								"most-liked"
+							]
 						}
 					}
 				]

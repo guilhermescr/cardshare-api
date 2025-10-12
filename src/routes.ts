@@ -63,6 +63,52 @@ const models: TsoaRoute.Models = {
     additionalProperties: false,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  UserRefDto: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      username: { dataType: 'string', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  UserDto: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      fullName: { dataType: 'string', required: true },
+      username: { dataType: 'string', required: true },
+      email: { dataType: 'string' },
+      bio: { dataType: 'string', required: true },
+      cards: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'CardDto' },
+        required: true,
+      },
+      favorites: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'CardDto' },
+        required: true,
+      },
+      likes: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'CardDto' },
+        required: true,
+      },
+      following: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'UserRefDto' },
+        required: true,
+      },
+      followers: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'UserRefDto' },
+        required: true,
+      },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   PaginatedResponseDto_CardDto_: {
     dataType: 'refObject',
     properties: {
@@ -101,6 +147,7 @@ const models: TsoaRoute.Models = {
   RegisterDto: {
     dataType: 'refObject',
     properties: {
+      fullName: { dataType: 'string', required: true },
       username: { dataType: 'string', required: true },
       email: { dataType: 'string', required: true },
       password: { dataType: 'string', required: true },
@@ -175,6 +222,57 @@ export function RegisterRoutes(app: Router) {
     }
   );
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUsersController_getUserByUsername: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    username: {
+      in: 'path',
+      name: 'username',
+      required: true,
+      dataType: 'string',
+    },
+  };
+  app.get(
+    '/users/username/:username',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UsersController),
+    ...fetchMiddlewares<RequestHandler>(
+      UsersController.prototype.getUserByUsername
+    ),
+
+    async function UsersController_getUserByUsername(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUsersController_getUserByUsername,
+          request,
+          response,
+        });
+
+        const controller = new UsersController();
+
+        await templateService.apiHandler({
+          methodName: 'getUserByUsername',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   const argsUsersController_toggleFollowUser: Record<
     string,
     TsoaRoute.ParameterSchema
@@ -228,6 +326,15 @@ export function RegisterRoutes(app: Router) {
     req: { in: 'request', name: 'req', required: true, dataType: 'object' },
     limit: { in: 'query', name: 'limit', dataType: 'double' },
     cursor: { in: 'query', name: 'cursor', dataType: 'string' },
+    sortBy: {
+      in: 'query',
+      name: 'sortBy',
+      dataType: 'union',
+      subSchemas: [
+        { dataType: 'enum', enums: ['latest'] },
+        { dataType: 'enum', enums: ['most-liked'] },
+      ],
+    },
   };
   app.get(
     '/users/me/cards',
@@ -273,6 +380,15 @@ export function RegisterRoutes(app: Router) {
     req: { in: 'request', name: 'req', required: true, dataType: 'object' },
     limit: { in: 'query', name: 'limit', dataType: 'double' },
     cursor: { in: 'query', name: 'cursor', dataType: 'string' },
+    sortBy: {
+      in: 'query',
+      name: 'sortBy',
+      dataType: 'union',
+      subSchemas: [
+        { dataType: 'enum', enums: ['latest'] },
+        { dataType: 'enum', enums: ['most-liked'] },
+      ],
+    },
   };
   app.get(
     '/users/me/liked',

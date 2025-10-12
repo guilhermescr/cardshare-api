@@ -16,6 +16,7 @@ import { Request as ExpressRequest } from 'express';
 import { CardsService } from '../services/cards.service';
 import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 import { CardDto } from '../dtos/card.dto';
+import { UserDto } from '../dtos/user.dto';
 
 @Route('users')
 @Tags('Users')
@@ -30,7 +31,7 @@ export class UsersController extends Controller {
   public async getUserById(
     @Request() req: ExpressRequest,
     @Path() id: string
-  ): Promise<{ user: any }> {
+  ): Promise<{ user: UserDto }> {
     const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
     if (!authenticatedUserId)
       throw { status: 401, message: 'User not authenticated.' };
@@ -40,6 +41,26 @@ export class UsersController extends Controller {
       targetId
     );
     if (!user) throw { status: 404, message: 'User not found.' };
+    return { user };
+  }
+
+  @Get('username/{username}')
+  @Response(401, 'User not authenticated')
+  @Response(404, 'User not found')
+  public async getUserByUsername(
+    @Request() req: ExpressRequest,
+    @Path() username: string
+  ): Promise<{ user: UserDto }> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
+
+    const user = await this.usersService.getUserByUsername(
+      authenticatedUserId,
+      username
+    );
+    if (!user) throw { status: 404, message: 'User not found.' };
+
     return { user };
   }
 
