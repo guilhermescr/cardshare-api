@@ -11,7 +11,7 @@ export class AuthService {
   private userRepository = new UserRepository();
 
   async register(registerDto: RegisterDto): Promise<AuthUserDto> {
-    const { username, email, password } = registerDto;
+    const { fullName, username, email, password } = registerDto;
 
     const existingUser = await this.userRepository.findOne({
       $or: [{ email }, { username }],
@@ -25,6 +25,7 @@ export class AuthService {
     const emailConfirmationToken = randomBytes(32).toString('hex');
 
     const createdUserDoc = await this.userRepository.create({
+      fullName,
       username,
       email,
       password: hashedPassword,

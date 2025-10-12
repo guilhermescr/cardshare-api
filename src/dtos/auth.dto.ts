@@ -3,6 +3,10 @@ import { Example } from 'tsoa';
 
 export class RegisterDto {
   @IsString()
+  @Example('John Doe')
+  fullName!: string;
+
+  @IsString()
   @Example('john_doe')
   username!: string;
 
@@ -30,6 +34,9 @@ export class AuthPayloadDto {
   @Example('user-id-123')
   id!: string;
 
+  @Example('John Doe')
+  fullName!: string;
+
   @Example('john_doe')
   username!: string;
 
@@ -40,6 +47,9 @@ export class AuthPayloadDto {
 export class AuthUserDto {
   @Example('user-id-123')
   id!: string;
+
+  @Example('John Doe')
+  fullName!: string;
 
   @Example('john_doe')
   username!: string;

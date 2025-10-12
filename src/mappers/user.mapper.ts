@@ -15,8 +15,10 @@ export class UserMapper {
   ): UserDto {
     return {
       id: user._id.toString(),
+      fullName: user.fullName,
       username: user.username,
       email: includeEmail ? user.email : undefined,
+      bio: user.bio,
       following,
       followers,
       cards: CardMapper.toDtoArray(cards),

@@ -1,5 +1,5 @@
-import { RegisterDto } from '../../src/dtos/auth.dto';
-import { ClassValidator } from '../../src/utils/ClassValidator';
+import { RegisterDto } from '../../../src/dtos/auth.dto';
+import { ClassValidator } from '../../../src/utils/ClassValidator';
 
 describe('ClassValidator', () => {
   it('should validate a correct RegisterDto', async () => {

@@ -5,6 +5,7 @@ export class AuthMapper {
   static toAuthUserDto(user: IUser): AuthUserDto {
     return {
       id: user._id.toString(),
+      fullName: user.fullName,
       username: user.username,
       email: user.email,
       emailConfirmed: user.emailConfirmed,
@@ -14,6 +15,7 @@ export class AuthMapper {
   static toAuthPayloadDto(user: IUser): AuthPayloadDto {
     return {
       id: user._id.toString(),
+      fullName: user.fullName,
       username: user.username,
       email: user.email,
     };

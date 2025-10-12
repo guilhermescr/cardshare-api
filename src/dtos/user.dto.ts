@@ -7,8 +7,10 @@ export interface UserRefDto {
 
 export class UserDto {
   id!: string;
+  fullName!: string;
   username!: string;
   email?: string;
+  bio!: string;
   cards!: CardDto[];
   favorites!: CardDto[];
   likes!: CardDto[];

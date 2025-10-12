@@ -2,11 +2,13 @@ import mongoose, { Document, Types } from 'mongoose';
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
+  fullName: string;
   username: string;
   email: string;
   emailConfirmed: boolean;
   emailConfirmationToken?: string | null;
   password: string;
+  bio: string;
   followers: Types.ObjectId[];
   following: Types.ObjectId[];
   createdAt: Date;
@@ -17,6 +19,10 @@ const { Schema } = mongoose;
 
 const UserSchema = new Schema(
   {
+    fullName: {
+      type: String,
+      required: true,
+    },
     username: {
       type: String,
       required: true,
@@ -42,6 +48,11 @@ const UserSchema = new Schema(
       type: String,
       required: true,
       minLength: 8,
+    },
+    bio: {
+      type: String,
+      default: '',
+      maxLength: 200,
     },
     followers: [{ type: Types.ObjectId, ref: 'User' }],
     following: [{ type: Types.ObjectId, ref: 'User' }],
