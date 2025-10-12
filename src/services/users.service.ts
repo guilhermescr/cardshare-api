@@ -16,7 +16,7 @@ export class UsersService {
     if (!foundUser) throw { status: 404, message: 'User not found.' };
 
     const isSelf = authenticatedUserId === targetUserId;
-    return this.buildUserDto(foundUser, isSelf);
+    return this.buildUserDto(foundUser, isSelf, authenticatedUserId);
   }
 
   async getUserByUsername(
@@ -28,7 +28,7 @@ export class UsersService {
     if (!foundUser) throw { status: 404, message: 'User not found.' };
 
     const isSelf = authenticatedUserId === foundUser._id.toString();
-    return this.buildUserDto(foundUser, isSelf);
+    return this.buildUserDto(foundUser, isSelf, authenticatedUserId);
   }
 
   async toggleFollowUser(
@@ -73,7 +73,8 @@ export class UsersService {
 
   private async buildUserDto(
     foundUser: IUser,
-    isSelf: boolean
+    isSelf: boolean,
+    authenticatedUserId?: string
   ): Promise<UserDto> {
     const cardQuery = isSelf
       ? { owner: foundUser._id }
@@ -114,6 +115,10 @@ export class UsersService {
       username: u.username,
     }));
 
+    const isFollowing = authenticatedUserId
+      ? foundUser.followers.some((id) => id.toString() === authenticatedUserId)
+      : false;
+
     return UserMapper.toDto(
       foundUser,
       foundCards,
@@ -121,7 +126,8 @@ export class UsersService {
       likedCards,
       isSelf,
       following,
-      followers
+      followers,
+      isFollowing
     );
   }
 }

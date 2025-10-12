@@ -95,6 +95,7 @@ const models: TsoaRoute.Models = {
         array: { dataType: 'refObject', ref: 'CardDto' },
         required: true,
       },
+      isFollowing: { dataType: 'boolean', required: true },
       following: {
         dataType: 'array',
         array: { dataType: 'refObject', ref: 'UserRefDto' },

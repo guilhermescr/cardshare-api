@@ -125,6 +125,9 @@
 						},
 						"type": "array"
 					},
+					"isFollowing": {
+						"type": "boolean"
+					},
 					"following": {
 						"items": {
 							"$ref": "#/components/schemas/UserRefDto"
@@ -146,6 +149,7 @@
 					"cards",
 					"favorites",
 					"likes",
+					"isFollowing",
 					"following",
 					"followers"
 				],

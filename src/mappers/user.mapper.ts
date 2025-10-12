@@ -11,7 +11,8 @@ export class UserMapper {
     likes: ICard[],
     includeEmail: boolean,
     following: UserRefDto[],
-    followers: UserRefDto[]
+    followers: UserRefDto[],
+    isFollowing: boolean
   ): UserDto {
     return {
       id: user._id.toString(),
@@ -19,6 +20,7 @@ export class UserMapper {
       username: user.username,
       email: includeEmail ? user.email : undefined,
       bio: user.bio,
+      isFollowing,
       following,
       followers,
       cards: CardMapper.toDtoArray(cards),

@@ -14,6 +14,7 @@ export class UserDto {
   cards!: CardDto[];
   favorites!: CardDto[];
   likes!: CardDto[];
+  isFollowing!: boolean;
   following!: UserRefDto[];
   followers!: UserRefDto[];
 }
