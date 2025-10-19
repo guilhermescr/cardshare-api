@@ -52,6 +52,8 @@ export class CardDto {
   visibility!: CardVisibilityEnum;
   owner!: string;
   ownerUsername?: string;
+  isLiked?: boolean;
+  isFavorited?: boolean;
   likes!: string[];
   favorites!: string[];
   createdAt!: Date;

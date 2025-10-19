@@ -217,10 +217,20 @@ export class CardsService {
     authenticatedUserId: string,
     cardId: string
   ): Promise<CardDto | null> {
-    const card = await this.cardRepository.findById(cardId);
+    const query = {
+      _id: cardId,
+      $or: [
+        { visibility: CardVisibilityEnum.public },
+        { owner: new Types.ObjectId(authenticatedUserId) },
+        { visibility: CardVisibilityEnum.unlisted },
+      ],
+    };
+    const card = await this.cardRepository.findOne(query);
+
     if (!card) throw { status: 404, message: 'Card not found.' };
 
     const userObjectId = new Types.ObjectId(authenticatedUserId);
+
     const hasLiked = card.likes.some((id: Types.ObjectId) =>
       id.equals(userObjectId)
     );
@@ -240,10 +250,20 @@ export class CardsService {
     authenticatedUserId: string,
     cardId: string
   ): Promise<CardDto | null> {
-    const card = await this.cardRepository.findById(cardId);
+    const query = {
+      _id: cardId,
+      $or: [
+        { visibility: CardVisibilityEnum.public },
+        { owner: new Types.ObjectId(authenticatedUserId) },
+        { visibility: CardVisibilityEnum.unlisted },
+      ],
+    };
+    const card = await this.cardRepository.findOne(query);
+
     if (!card) throw { status: 404, message: 'Card not found.' };
 
     const userObjectId = new Types.ObjectId(authenticatedUserId);
+
     const hasFavorited = card.favorites.some((id: Types.ObjectId) =>
       id.equals(userObjectId)
     );

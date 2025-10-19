@@ -59,6 +59,10 @@ export class CardsController extends Controller {
 
     const card = await this.cardsService.findCardById(authenticatedUserId, id);
     if (!card) throw { status: 404, message: 'Card not found.' };
+
+    card.isLiked = card.likes.includes(authenticatedUserId);
+    card.isFavorited = card.favorites.includes(authenticatedUserId);
+
     return card;
   }
 
@@ -125,7 +129,18 @@ export class CardsController extends Controller {
     if (!authenticatedUserId)
       throw { status: 401, message: 'User not authenticated.' };
 
-    return await this.cardsService.toggleLikeCard(authenticatedUserId, id);
+    const updatedCard = await this.cardsService.toggleLikeCard(
+      authenticatedUserId,
+      id
+    );
+
+    if (!updatedCard) throw { status: 404, message: 'Card not found.' };
+
+    updatedCard.isLiked = updatedCard.likes.includes(authenticatedUserId);
+    updatedCard.isFavorited =
+      updatedCard.favorites.includes(authenticatedUserId);
+
+    return updatedCard;
   }
 
   @Post('{id}/favorite')
@@ -137,6 +152,17 @@ export class CardsController extends Controller {
     if (!authenticatedUserId)
       throw { status: 401, message: 'User not authenticated.' };
 
-    return await this.cardsService.toggleFavoriteCard(authenticatedUserId, id);
+    const updatedCard = await this.cardsService.toggleFavoriteCard(
+      authenticatedUserId,
+      id
+    );
+
+    if (!updatedCard) throw { status: 404, message: 'Card not found.' };
+
+    updatedCard.isLiked = updatedCard.likes.includes(authenticatedUserId);
+    updatedCard.isFavorited =
+      updatedCard.favorites.includes(authenticatedUserId);
+
+    return updatedCard;
   }
 }
