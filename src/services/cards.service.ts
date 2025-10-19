@@ -243,7 +243,15 @@ export class CardsService {
     }
 
     const updatedCard = await this.cardRepository.update(cardId, updateDto);
-    return updatedCard ? CardMapper.toDto(updatedCard) : null;
+
+    if (!updatedCard) return null;
+
+    const ownerData = CardMapper.extractOwnerData(card.owner);
+    return {
+      ...CardMapper.toDto(updatedCard),
+      owner: ownerData.ownerId,
+      ownerUsername: ownerData.ownerUsername,
+    };
   }
 
   async toggleFavoriteCard(
@@ -276,6 +284,14 @@ export class CardsService {
     }
 
     const updatedCard = await this.cardRepository.update(cardId, updateDto);
-    return updatedCard ? CardMapper.toDto(updatedCard) : null;
+
+    if (!updatedCard) return null;
+
+    const ownerData = CardMapper.extractOwnerData(card.owner);
+    return {
+      ...CardMapper.toDto(updatedCard),
+      owner: ownerData.ownerId,
+      ownerUsername: ownerData.ownerUsername,
+    };
   }
 }

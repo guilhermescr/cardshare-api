@@ -9,18 +9,26 @@ function isPopulatedOwner(
 }
 
 export class CardMapper {
-  static toDto(card: ICard): CardDto {
+  static extractOwnerData(
+    owner: Types.ObjectId | { _id: Types.ObjectId; username?: string }
+  ): { ownerId: string; ownerUsername?: string } {
     let ownerId = '';
-    let ownerUsername: string | undefined = undefined;
+    let ownerUsername: string | undefined;
 
-    if (card.owner) {
-      if (isPopulatedOwner(card.owner)) {
-        ownerId = card.owner._id.toString();
-        ownerUsername = card.owner.username;
+    if (owner) {
+      if (isPopulatedOwner(owner)) {
+        ownerId = owner._id.toString();
+        ownerUsername = owner.username;
       } else {
-        ownerId = card.owner.toString();
+        ownerId = owner.toString();
       }
     }
+
+    return { ownerId, ownerUsername };
+  }
+
+  static toDto(card: ICard): CardDto {
+    const { ownerId, ownerUsername } = this.extractOwnerData(card.owner);
 
     return {
       id: card._id.toString(),
