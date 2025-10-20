@@ -1,4 +1,5 @@
 import mongoose, { Document, Types } from 'mongoose';
+import { IComment } from './Comment';
 
 export enum CardVisibilityEnum {
   private = 'private',
@@ -15,9 +16,14 @@ export interface ICard extends Document {
   owner: Types.ObjectId | { _id: Types.ObjectId; username?: string };
   likes: Types.ObjectId[];
   favorites: Types.ObjectId[];
+  comments: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type IPopulatedCard = Omit<ICard, 'comments'> & {
+  comments: IComment[];
+};
 
 const { Schema } = mongoose;
 
@@ -53,6 +59,12 @@ const CardSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: 'User',
+      },
+    ],
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Comment',
       },
     ],
   },

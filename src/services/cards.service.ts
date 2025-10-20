@@ -1,5 +1,10 @@
 import { RootFilterQuery, Types } from 'mongoose';
-import { CardDto, CreateCardDto, UpdateCardDto } from '../dtos/card.dto';
+import {
+  CardDto,
+  CreateCardDto,
+  PopulatedCardDto,
+  UpdateCardDto,
+} from '../dtos/card.dto';
 import { CardVisibilityEnum, ICard } from '../models/Card';
 import { CardMapper } from '../mappers/card.mapper';
 import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
@@ -157,7 +162,7 @@ export class CardsService {
   async findCardById(
     authenticatedUserId: string,
     cardId: string
-  ): Promise<CardDto | null> {
+  ): Promise<PopulatedCardDto | null> {
     const query = {
       _id: cardId,
       $or: [
@@ -168,7 +173,7 @@ export class CardsService {
     };
     const card = await this.cardRepository.findOne(query);
 
-    return card ? CardMapper.toDto(card) : null;
+    return card ? CardMapper.toPopulatedDto(card) : null;
   }
 
   async createCard(

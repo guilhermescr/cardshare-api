@@ -60,6 +60,7 @@ async function loginDebugUser(): Promise<AuthPayloadDto | null> {
   return {
     email: user.email,
     id: user._id.toString(),
+    fullName: user.fullName,
     username: user.username,
   };
 }

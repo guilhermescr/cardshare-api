@@ -1,12 +1,30 @@
-import { Card, ICard } from '../models/Card';
+import { Card, ICard, IPopulatedCard } from '../models/Card';
 
 export class CardRepository {
   async findById(cardId: string): Promise<ICard | null> {
-    return Card.findById(cardId).populate('owner', 'username').exec();
+    return Card.findById(cardId)
+      .populate('owner', 'username')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+          select: 'username',
+        },
+      })
+      .exec();
   }
 
-  async findOne(query: any): Promise<ICard | null> {
-    return Card.findOne(query).populate('owner', 'username').exec();
+  async findOne(query: any): Promise<IPopulatedCard | null> {
+    return Card.findOne(query)
+      .populate('owner', 'username')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+          select: 'username',
+        },
+      })
+      .exec() as Promise<IPopulatedCard | null>;
   }
 
   async find(

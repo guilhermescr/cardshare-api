@@ -6,6 +6,8 @@ import { fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UsersController } from './controllers/users.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { CommentsController } from './controllers/comments.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CardsController } from './controllers/cards.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './controllers/auth.controller';
@@ -47,12 +49,19 @@ const models: TsoaRoute.Models = {
       visibility: { ref: 'CardVisibilityEnum', required: true },
       owner: { dataType: 'string', required: true },
       ownerUsername: { dataType: 'string' },
+      isLiked: { dataType: 'boolean' },
+      isFavorited: { dataType: 'boolean' },
       likes: {
         dataType: 'array',
         array: { dataType: 'string' },
         required: true,
       },
       favorites: {
+        dataType: 'array',
+        array: { dataType: 'string' },
+        required: true,
+      },
+      comments: {
         dataType: 'array',
         array: { dataType: 'string' },
         required: true,
@@ -119,6 +128,79 @@ const models: TsoaRoute.Models = {
         required: true,
       },
       nextCursor: { dataType: 'string' },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  CommentDto: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      cardId: { dataType: 'string', required: true },
+      authorId: { dataType: 'string', required: true },
+      author: { dataType: 'string' },
+      content: { dataType: 'string', required: true },
+      likes: {
+        dataType: 'array',
+        array: { dataType: 'string' },
+        required: true,
+      },
+      createdAt: { dataType: 'datetime', required: true },
+      updatedAt: { dataType: 'datetime', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  CreateCommentDto: {
+    dataType: 'refObject',
+    properties: {
+      cardId: { dataType: 'string', required: true },
+      content: { dataType: 'string', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  PopulatedCardDto: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      title: { dataType: 'string', required: true },
+      description: {
+        dataType: 'union',
+        subSchemas: [
+          { dataType: 'string' },
+          { dataType: 'enum', enums: [null] },
+        ],
+      },
+      imageUrl: {
+        dataType: 'union',
+        subSchemas: [
+          { dataType: 'string' },
+          { dataType: 'enum', enums: [null] },
+        ],
+      },
+      visibility: { ref: 'CardVisibilityEnum', required: true },
+      owner: { dataType: 'string', required: true },
+      ownerUsername: { dataType: 'string' },
+      isLiked: { dataType: 'boolean' },
+      isFavorited: { dataType: 'boolean' },
+      likes: {
+        dataType: 'array',
+        array: { dataType: 'string' },
+        required: true,
+      },
+      favorites: {
+        dataType: 'array',
+        array: { dataType: 'string' },
+        required: true,
+      },
+      comments: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'CommentDto' },
+        required: true,
+      },
+      createdAt: { dataType: 'datetime', required: true },
+      updatedAt: { dataType: 'datetime', required: true },
     },
     additionalProperties: false,
   },
@@ -418,6 +500,98 @@ export function RegisterRoutes(app: Router) {
 
         await templateService.apiHandler({
           methodName: 'getMyLikedCards',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsCommentsController_createComment: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    body: { in: 'body', name: 'body', required: true, ref: 'CreateCommentDto' },
+  };
+  app.post(
+    '/comments',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(CommentsController),
+    ...fetchMiddlewares<RequestHandler>(
+      CommentsController.prototype.createComment
+    ),
+
+    async function CommentsController_createComment(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsCommentsController_createComment,
+          request,
+          response,
+        });
+
+        const controller = new CommentsController();
+
+        await templateService.apiHandler({
+          methodName: 'createComment',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: 201,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsCommentsController_toggleLikeComment: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    id: { in: 'path', name: 'id', required: true, dataType: 'string' },
+  };
+  app.post(
+    '/comments/:id/like',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(CommentsController),
+    ...fetchMiddlewares<RequestHandler>(
+      CommentsController.prototype.toggleLikeComment
+    ),
+
+    async function CommentsController_toggleLikeComment(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsCommentsController_toggleLikeComment,
+          request,
+          response,
+        });
+
+        const controller = new CommentsController();
+
+        await templateService.apiHandler({
+          methodName: 'toggleLikeComment',
           controller,
           response,
           next,

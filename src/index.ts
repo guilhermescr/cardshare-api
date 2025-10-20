@@ -14,10 +14,13 @@ app.use(express.json());
 app.use(
   cors({
     origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
   })
 );
 app.use('/users', authMiddleware);
 app.use('/cards', authMiddleware);
+app.use('/comments', authMiddleware);
 RegisterRoutes(app);
 
 setupSwagger(app);

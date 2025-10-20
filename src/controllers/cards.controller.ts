@@ -15,7 +15,12 @@ import {
   Controller,
 } from 'tsoa';
 import { CardsService } from '../services/cards.service';
-import { CreateCardDto, UpdateCardDto, CardDto } from '../dtos/card.dto';
+import {
+  CreateCardDto,
+  UpdateCardDto,
+  CardDto,
+  PopulatedCardDto,
+} from '../dtos/card.dto';
 import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 import { Request as ExpressRequest } from 'express';
 import { AuthenticatedRequest } from '../types/auth';
@@ -52,7 +57,7 @@ export class CardsController extends Controller {
   public async getCardById(
     @Request() req: ExpressRequest,
     @Path() id: string
-  ): Promise<CardDto | null> {
+  ): Promise<PopulatedCardDto | null> {
     const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
     if (!authenticatedUserId)
       throw { status: 401, message: 'User not authenticated.' };

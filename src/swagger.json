@@ -40,6 +40,12 @@
 					"ownerUsername": {
 						"type": "string"
 					},
+					"isLiked": {
+						"type": "boolean"
+					},
+					"isFavorited": {
+						"type": "boolean"
+					},
 					"likes": {
 						"items": {
 							"type": "string"
@@ -47,6 +53,12 @@
 						"type": "array"
 					},
 					"favorites": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"comments": {
 						"items": {
 							"type": "string"
 						},
@@ -68,6 +80,7 @@
 					"owner",
 					"likes",
 					"favorites",
+					"comments",
 					"createdAt",
 					"updatedAt"
 				],
@@ -170,6 +183,138 @@
 				},
 				"required": [
 					"items"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CommentDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"cardId": {
+						"type": "string"
+					},
+					"authorId": {
+						"type": "string"
+					},
+					"author": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"likes": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"cardId",
+					"authorId",
+					"content",
+					"likes",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateCommentDto": {
+				"properties": {
+					"cardId": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"cardId",
+					"content"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PopulatedCardDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"imageUrl": {
+						"type": "string",
+						"nullable": true
+					},
+					"visibility": {
+						"$ref": "#/components/schemas/CardVisibilityEnum"
+					},
+					"owner": {
+						"type": "string"
+					},
+					"ownerUsername": {
+						"type": "string"
+					},
+					"isLiked": {
+						"type": "boolean"
+					},
+					"isFavorited": {
+						"type": "boolean"
+					},
+					"likes": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"favorites": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"comments": {
+						"items": {
+							"$ref": "#/components/schemas/CommentDto"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"visibility",
+					"owner",
+					"likes",
+					"favorites",
+					"comments",
+					"createdAt",
+					"updatedAt"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -528,6 +673,80 @@
 				]
 			}
 		},
+		"/comments": {
+			"post": {
+				"operationId": "CreateComment",
+				"responses": {
+					"201": {
+						"description": "Comment created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommentDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Comments"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateCommentDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/comments/{id}/like": {
+			"post": {
+				"operationId": "ToggleLikeComment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommentDto"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Comment not found"
+					}
+				},
+				"tags": [
+					"Comments"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/cards": {
 			"get": {
 				"operationId": "GetCards",
@@ -642,7 +861,7 @@
 								"schema": {
 									"allOf": [
 										{
-											"$ref": "#/components/schemas/CardDto"
+											"$ref": "#/components/schemas/PopulatedCardDto"
 										}
 									],
 									"nullable": true
