@@ -3,7 +3,9 @@ import { Comment, IComment } from '../models/Comment';
 export class CommentRepository {
   async create(data: Partial<IComment>): Promise<IComment> {
     const comment = new Comment(data);
-    return comment.save();
+    await comment.save();
+    await comment.populate('author', 'username');
+    return comment;
   }
 
   async findById(commentId: string): Promise<IComment | null> {
