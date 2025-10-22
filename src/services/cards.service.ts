@@ -159,7 +159,7 @@ export class CardsService {
     }
   }
 
-  async findCardById(
+  async getCardById(
     authenticatedUserId: string,
     cardId: string
   ): Promise<PopulatedCardDto | null> {

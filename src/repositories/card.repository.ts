@@ -19,6 +19,7 @@ export class CardRepository {
       .populate('owner', 'username')
       .populate({
         path: 'comments',
+        options: { sort: { createdAt: -1 } },
         populate: {
           path: 'author',
           select: 'username',

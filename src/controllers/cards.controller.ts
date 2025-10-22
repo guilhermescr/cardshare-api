@@ -62,7 +62,7 @@ export class CardsController extends Controller {
     if (!authenticatedUserId)
       throw { status: 401, message: 'User not authenticated.' };
 
-    const card = await this.cardsService.findCardById(authenticatedUserId, id);
+    const card = await this.cardsService.getCardById(authenticatedUserId, id);
     if (!card) throw { status: 404, message: 'Card not found.' };
 
     card.isLiked = card.likes.includes(authenticatedUserId);
