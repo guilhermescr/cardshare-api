@@ -747,6 +747,37 @@
 				]
 			}
 		},
+		"/comments/{id}": {
+			"delete": {
+				"operationId": "DeleteComment",
+				"responses": {
+					"204": {
+						"description": "Comment deleted"
+					},
+					"404": {
+						"description": "Comment not found"
+					}
+				},
+				"tags": [
+					"Comments"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/cards": {
 			"get": {
 				"operationId": "GetCards",

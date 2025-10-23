@@ -9,7 +9,9 @@ import {
   Tags,
   Security,
   Controller,
+  Delete,
 } from 'tsoa';
+import { Request as ExpressRequest } from 'express';
 import { CommentsService } from '../services/comments.service';
 import { AuthenticatedRequest } from '../types/auth';
 import { CommentDto, CreateCommentDto } from '../dtos/comment.dto';
@@ -61,5 +63,24 @@ export class CommentsController extends Controller {
     }
 
     return updatedComment;
+  }
+
+  @Delete('{id}')
+  @SuccessResponse(204, 'Comment deleted')
+  @Response(404, 'Comment not found')
+  public async deleteComment(
+    @Request() req: ExpressRequest,
+    @Path() id: string
+  ): Promise<void> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
+
+    const deletedComment = await this.commentsService.deleteComment(
+      authenticatedUserId,
+      id
+    );
+    if (!deletedComment) throw { status: 404, message: 'Comment not found.' };
+    this.setStatus(204);
   }
 }

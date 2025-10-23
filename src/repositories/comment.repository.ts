@@ -22,4 +22,8 @@ export class CommentRepository {
   async delete(commentId: string): Promise<IComment | null> {
     return Comment.findByIdAndDelete(commentId).exec();
   }
+
+  async findOneAndDelete(query: any): Promise<IComment | null> {
+    return Comment.findOneAndDelete(query).exec();
+  }
 }

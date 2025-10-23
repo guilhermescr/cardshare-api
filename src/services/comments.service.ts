@@ -29,6 +29,19 @@ export class CommentsService {
     return CommentMapper.toDto(comment);
   }
 
+  async deleteComment(
+    authenticatedUserId: string,
+    commentId: string
+  ): Promise<CommentDto | null> {
+    const query = {
+      _id: commentId,
+      author: new Types.ObjectId(authenticatedUserId),
+    };
+    const result = await this.commentRepository.findOneAndDelete(query);
+
+    return result ? CommentMapper.toDto(result) : null;
+  }
+
   async toggleLikeComment(
     commentId: string,
     userId: string
