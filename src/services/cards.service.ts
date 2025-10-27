@@ -254,8 +254,11 @@ export class CardsService {
     const ownerData = CardMapper.extractOwnerData(card.owner);
     return {
       ...CardMapper.toDto(updatedCard),
-      author: ownerData.ownerId,
-      authorUsername: ownerData.ownerUsername,
+      author: {
+        id: ownerData.ownerId,
+        username: ownerData.ownerUsername,
+        profilePicture: ownerData.profilePicture,
+      },
     };
   }
 
@@ -295,8 +298,11 @@ export class CardsService {
     const ownerData = CardMapper.extractOwnerData(card.owner);
     return {
       ...CardMapper.toDto(updatedCard),
-      author: ownerData.ownerId,
-      authorUsername: ownerData.ownerUsername,
+      author: {
+        id: ownerData.ownerId,
+        username: ownerData.ownerUsername,
+        profilePicture: ownerData.profilePicture,
+      },
     };
   }
 }

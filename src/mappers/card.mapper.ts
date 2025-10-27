@@ -3,33 +3,47 @@ import { CardDto, PopulatedCardDto } from '../dtos/card.dto';
 import { ICard, IPopulatedCard } from '../models/Card';
 import { CommentMapper } from './comment.mapper';
 
+type OwnerParams = {
+  _id: Types.ObjectId;
+  username?: string;
+  profilePicture?: string;
+};
+
+type OwnerResult = {
+  ownerId: string;
+  ownerUsername?: string;
+  profilePicture?: string;
+};
+
 function isPopulatedOwner(
-  owner: Types.ObjectId | { _id: Types.ObjectId; username?: string }
-): owner is { _id: Types.ObjectId; username?: string } {
+  owner: Types.ObjectId | OwnerParams
+): owner is OwnerParams {
   return typeof owner === 'object' && '_id' in owner;
 }
 
 export class CardMapper {
-  static extractOwnerData(
-    owner: Types.ObjectId | { _id: Types.ObjectId; username?: string }
-  ): { ownerId: string; ownerUsername?: string } {
+  static extractOwnerData(owner: Types.ObjectId | OwnerParams): OwnerResult {
     let ownerId = '';
     let ownerUsername: string | undefined;
+    let profilePicture: string | undefined;
 
     if (owner) {
       if (isPopulatedOwner(owner)) {
         ownerId = owner._id.toString();
         ownerUsername = owner.username;
+        profilePicture = owner.profilePicture;
       } else {
         ownerId = owner.toString();
       }
     }
 
-    return { ownerId, ownerUsername };
+    return { ownerId, ownerUsername, profilePicture };
   }
 
   static toDto(card: ICard): CardDto {
-    const { ownerId, ownerUsername } = this.extractOwnerData(card.owner);
+    const { ownerId, ownerUsername, profilePicture } = this.extractOwnerData(
+      card.owner
+    );
 
     return {
       id: card._id.toString(),
@@ -37,8 +51,11 @@ export class CardMapper {
       description: card.description,
       imageUrl: card.imageUrl,
       visibility: card.visibility,
-      author: ownerId,
-      authorUsername: ownerUsername,
+      author: {
+        id: ownerId,
+        username: ownerUsername,
+        profilePicture,
+      },
       likes: card.likes?.map((id: Types.ObjectId) => id.toString()) ?? [],
       favorites:
         card.favorites?.map((id: Types.ObjectId) => id.toString()) ?? [],
@@ -53,7 +70,9 @@ export class CardMapper {
   }
 
   static toPopulatedDto(card: IPopulatedCard): PopulatedCardDto {
-    const { ownerId, ownerUsername } = this.extractOwnerData(card.owner);
+    const { ownerId, ownerUsername, profilePicture } = this.extractOwnerData(
+      card.owner
+    );
 
     return {
       id: card._id.toString(),
@@ -61,8 +80,11 @@ export class CardMapper {
       description: card.description,
       imageUrl: card.imageUrl,
       visibility: card.visibility,
-      author: ownerId,
-      authorUsername: ownerUsername,
+      author: {
+        id: ownerId,
+        username: ownerUsername,
+        profilePicture,
+      },
       likes: card.likes?.map((id: Types.ObjectId) => id.toString()) ?? [],
       favorites:
         card.favorites?.map((id: Types.ObjectId) => id.toString()) ?? [],

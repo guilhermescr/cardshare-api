@@ -3,7 +3,7 @@ import { Card, ICard, IPopulatedCard } from '../models/Card';
 export class CardRepository {
   async findById(cardId: string): Promise<ICard | null> {
     return Card.findById(cardId)
-      .populate('owner', 'username')
+      .populate('owner', 'username profilePicture')
       .populate({
         path: 'comments',
         populate: {
@@ -16,7 +16,7 @@ export class CardRepository {
 
   async findOne(query: any): Promise<IPopulatedCard | null> {
     return Card.findOne(query)
-      .populate('owner', 'username')
+      .populate('owner', 'username profilePicture')
       .populate({
         path: 'comments',
         options: { sort: { createdAt: -1 } },
@@ -32,7 +32,7 @@ export class CardRepository {
     query: any,
     options: { sort?: any; limit?: number } = {}
   ): Promise<ICard[]> {
-    let cursor = Card.find(query).populate('owner', 'username');
+    let cursor = Card.find(query).populate('owner', 'username profilePicture');
     if (options.sort) cursor = cursor.sort(options.sort);
     if (options.limit) cursor = cursor.limit(options.limit);
     return cursor.exec();

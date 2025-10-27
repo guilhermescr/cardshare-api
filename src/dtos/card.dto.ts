@@ -45,14 +45,19 @@ export class UpdateCardDto {
   visibility?: CardVisibilityEnum;
 }
 
+export class AuthorDto {
+  id!: string;
+  username?: string;
+  profilePicture?: string;
+}
+
 export class CardDto {
   id!: string;
   title!: string;
   description?: string | null;
   imageUrl?: string | null;
   visibility!: CardVisibilityEnum;
-  author!: string;
-  authorUsername?: string;
+  author!: AuthorDto;
   isLiked?: boolean;
   isFavorited?: boolean;
   likes!: string[];
@@ -68,8 +73,7 @@ export class PopulatedCardDto {
   description?: string | null;
   imageUrl?: string | null;
   visibility!: CardVisibilityEnum;
-  author!: string;
-  authorUsername?: string;
+  author!: AuthorDto;
   isLiked?: boolean;
   isFavorited?: boolean;
   likes!: string[];
