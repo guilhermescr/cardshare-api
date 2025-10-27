@@ -51,8 +51,8 @@ export class CardDto {
   description?: string | null;
   imageUrl?: string | null;
   visibility!: CardVisibilityEnum;
-  owner!: string;
-  ownerUsername?: string;
+  author!: string;
+  authorUsername?: string;
   isLiked?: boolean;
   isFavorited?: boolean;
   likes!: string[];
@@ -68,8 +68,8 @@ export class PopulatedCardDto {
   description?: string | null;
   imageUrl?: string | null;
   visibility!: CardVisibilityEnum;
-  owner!: string;
-  ownerUsername?: string;
+  author!: string;
+  authorUsername?: string;
   isLiked?: boolean;
   isFavorited?: boolean;
   likes!: string[];

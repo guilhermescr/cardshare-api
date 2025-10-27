@@ -37,8 +37,8 @@ export class CardMapper {
       description: card.description,
       imageUrl: card.imageUrl,
       visibility: card.visibility,
-      owner: ownerId,
-      ownerUsername,
+      author: ownerId,
+      authorUsername: ownerUsername,
       likes: card.likes?.map((id: Types.ObjectId) => id.toString()) ?? [],
       favorites:
         card.favorites?.map((id: Types.ObjectId) => id.toString()) ?? [],
@@ -61,8 +61,8 @@ export class CardMapper {
       description: card.description,
       imageUrl: card.imageUrl,
       visibility: card.visibility,
-      owner: ownerId,
-      ownerUsername,
+      author: ownerId,
+      authorUsername: ownerUsername,
       likes: card.likes?.map((id: Types.ObjectId) => id.toString()) ?? [],
       favorites:
         card.favorites?.map((id: Types.ObjectId) => id.toString()) ?? [],
