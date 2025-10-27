@@ -15,6 +15,24 @@
 				],
 				"type": "string"
 			},
+			"AuthorDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"profilePicture": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CardDto": {
 				"properties": {
 					"id": {
@@ -34,11 +52,8 @@
 					"visibility": {
 						"$ref": "#/components/schemas/CardVisibilityEnum"
 					},
-					"owner": {
-						"type": "string"
-					},
-					"ownerUsername": {
-						"type": "string"
+					"author": {
+						"$ref": "#/components/schemas/AuthorDto"
 					},
 					"isLiked": {
 						"type": "boolean"
@@ -77,7 +92,7 @@
 					"id",
 					"title",
 					"visibility",
-					"owner",
+					"author",
 					"likes",
 					"favorites",
 					"comments",
@@ -116,6 +131,10 @@
 					},
 					"email": {
 						"type": "string"
+					},
+					"profilePicture": {
+						"type": "string",
+						"nullable": true
 					},
 					"bio": {
 						"type": "string"
@@ -158,6 +177,7 @@
 					"id",
 					"fullName",
 					"username",
+					"profilePicture",
 					"bio",
 					"cards",
 					"favorites",
@@ -195,11 +215,8 @@
 					"cardId": {
 						"type": "string"
 					},
-					"authorId": {
-						"type": "string"
-					},
 					"author": {
-						"type": "string"
+						"$ref": "#/components/schemas/AuthorDto"
 					},
 					"content": {
 						"type": "string"
@@ -222,7 +239,7 @@
 				"required": [
 					"id",
 					"cardId",
-					"authorId",
+					"author",
 					"content",
 					"likes",
 					"createdAt",
@@ -266,11 +283,8 @@
 					"visibility": {
 						"$ref": "#/components/schemas/CardVisibilityEnum"
 					},
-					"owner": {
-						"type": "string"
-					},
-					"ownerUsername": {
-						"type": "string"
+					"author": {
+						"$ref": "#/components/schemas/AuthorDto"
 					},
 					"isLiked": {
 						"type": "boolean"
@@ -309,7 +323,7 @@
 					"id",
 					"title",
 					"visibility",
-					"owner",
+					"author",
 					"likes",
 					"favorites",
 					"comments",

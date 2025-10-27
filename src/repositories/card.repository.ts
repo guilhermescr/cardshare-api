@@ -8,7 +8,7 @@ export class CardRepository {
         path: 'comments',
         populate: {
           path: 'author',
-          select: 'username',
+          select: 'username profilePicture',
         },
       })
       .exec();
@@ -22,7 +22,7 @@ export class CardRepository {
         options: { sort: { createdAt: -1 } },
         populate: {
           path: 'author',
-          select: 'username',
+          select: 'username profilePicture',
         },
       })
       .exec() as Promise<IPopulatedCard | null>;

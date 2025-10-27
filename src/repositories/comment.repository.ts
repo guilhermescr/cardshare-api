@@ -4,7 +4,7 @@ export class CommentRepository {
   async create(data: Partial<IComment>): Promise<IComment> {
     const comment = new Comment(data);
     await comment.save();
-    await comment.populate('author', 'username');
+    await comment.populate('author', 'username profilePicture');
     return comment;
   }
 

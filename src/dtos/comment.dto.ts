@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
+import { AuthorDto } from './card.dto';
 
 export class CreateCommentDto {
   @IsNotEmpty()
@@ -13,8 +14,7 @@ export class CreateCommentDto {
 export class CommentDto {
   id!: string;
   cardId!: string;
-  authorId!: string;
-  author?: string;
+  author!: AuthorDto;
   content!: string;
   likes!: string[];
   createdAt!: Date;

@@ -13,11 +13,20 @@ function extractCommentData(comment: IComment): CommentDto {
       ? (comment.author as { _id: Types.ObjectId; username?: string }).username
       : undefined;
 
+  const profilePicture =
+    typeof comment.author === 'object' && '_id' in comment.author
+      ? (comment.author as { _id: Types.ObjectId; profilePicture?: string })
+          .profilePicture
+      : undefined;
+
   return {
     id: comment._id.toString(),
     cardId: comment.card.toString(),
-    authorId,
-    author,
+    author: {
+      id: authorId,
+      username: author,
+      profilePicture: profilePicture,
+    },
     content: comment.content,
     likes: comment.likes?.map((id: Types.ObjectId) => id.toString()) ?? [],
     createdAt: comment.createdAt,

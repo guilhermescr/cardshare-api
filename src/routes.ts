@@ -29,6 +29,16 @@ const models: TsoaRoute.Models = {
     enums: ['private', 'public', 'unlisted'],
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  AuthorDto: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      username: { dataType: 'string' },
+      profilePicture: { dataType: 'string' },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   CardDto: {
     dataType: 'refObject',
     properties: {
@@ -49,8 +59,7 @@ const models: TsoaRoute.Models = {
         ],
       },
       visibility: { ref: 'CardVisibilityEnum', required: true },
-      owner: { dataType: 'string', required: true },
-      ownerUsername: { dataType: 'string' },
+      author: { ref: 'AuthorDto', required: true },
       isLiked: { dataType: 'boolean' },
       isFavorited: { dataType: 'boolean' },
       likes: {
@@ -90,6 +99,14 @@ const models: TsoaRoute.Models = {
       fullName: { dataType: 'string', required: true },
       username: { dataType: 'string', required: true },
       email: { dataType: 'string' },
+      profilePicture: {
+        dataType: 'union',
+        subSchemas: [
+          { dataType: 'string' },
+          { dataType: 'enum', enums: [null] },
+        ],
+        required: true,
+      },
       bio: { dataType: 'string', required: true },
       cards: {
         dataType: 'array',
@@ -139,8 +156,7 @@ const models: TsoaRoute.Models = {
     properties: {
       id: { dataType: 'string', required: true },
       cardId: { dataType: 'string', required: true },
-      authorId: { dataType: 'string', required: true },
-      author: { dataType: 'string' },
+      author: { ref: 'AuthorDto', required: true },
       content: { dataType: 'string', required: true },
       likes: {
         dataType: 'array',
@@ -182,8 +198,7 @@ const models: TsoaRoute.Models = {
         ],
       },
       visibility: { ref: 'CardVisibilityEnum', required: true },
-      owner: { dataType: 'string', required: true },
-      ownerUsername: { dataType: 'string' },
+      author: { ref: 'AuthorDto', required: true },
       isLiked: { dataType: 'boolean' },
       isFavorited: { dataType: 'boolean' },
       likes: {
