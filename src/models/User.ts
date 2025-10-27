@@ -8,6 +8,7 @@ export interface IUser extends Document {
   emailConfirmed: boolean;
   emailConfirmationToken?: string | null;
   password: string;
+  profilePicture: string | null;
   bio: string;
   followers: Types.ObjectId[];
   following: Types.ObjectId[];
@@ -48,6 +49,10 @@ const UserSchema = new Schema(
       type: String,
       required: true,
       minLength: 8,
+    },
+    profilePicture: {
+      type: String,
+      default: null,
     },
     bio: {
       type: String,

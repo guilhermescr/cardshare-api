@@ -6,6 +6,8 @@ import { fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UsersController } from './controllers/users.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { UploadController } from './controllers/upload.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CommentsController } from './controllers/comments.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CardsController } from './controllers/cards.controller';
@@ -17,7 +19,7 @@ import type {
   RequestHandler,
   Router,
 } from 'express';
-import { expressAuthenticationRecasted } from './middlewares/authMiddleware';
+import { expressAuthenticationRecasted } from './middlewares/auth.middleware';
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
@@ -505,6 +507,51 @@ export function RegisterRoutes(app: Router) {
           next,
           validatedArgs,
           successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUploadController_uploadProfilePicture: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+  };
+  app.post(
+    '/upload/profile-picture',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UploadController),
+    ...fetchMiddlewares<RequestHandler>(
+      UploadController.prototype.uploadProfilePicture
+    ),
+
+    async function UploadController_uploadProfilePicture(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUploadController_uploadProfilePicture,
+          request,
+          response,
+        });
+
+        const controller = new UploadController();
+
+        await templateService.apiHandler({
+          methodName: 'uploadProfilePicture',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: 200,
         });
       } catch (err) {
         return next(err);

@@ -10,6 +10,7 @@ export class UserDto {
   fullName!: string;
   username!: string;
   email?: string;
+  profilePicture!: string | null;
   bio!: string;
   cards!: CardDto[];
   favorites!: CardDto[];

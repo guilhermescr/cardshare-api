@@ -5,7 +5,8 @@ import cors from 'cors';
 import { errorHandler } from './middlewares/errorHandler';
 import { setupSwagger } from './swagger';
 import { RegisterRoutes } from './routes';
-import { authMiddleware } from './middlewares/authMiddleware';
+import { authMiddleware } from './middlewares/auth.middleware';
+import upload from './middlewares/upload.middleware';
 
 dotenv.config();
 
@@ -21,6 +22,16 @@ app.use(
 app.use('/users', authMiddleware);
 app.use('/cards', authMiddleware);
 app.use('/comments', authMiddleware);
+
+app.post(
+  '/upload/profile-picture',
+  authMiddleware,
+  upload.single('file'),
+  (req, res, next) => {
+    next();
+  }
+);
+
 RegisterRoutes(app);
 
 setupSwagger(app);

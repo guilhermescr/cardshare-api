@@ -21,4 +21,8 @@ export class UserRepository {
   async updateOne(query: any, update: any): Promise<IUser | null> {
     return User.findOneAndUpdate(query, update, { new: true }).exec();
   }
+
+  async findByIdAndUpdate(userId: string, update: any): Promise<IUser | null> {
+    return User.findByIdAndUpdate(userId, update, { new: true }).exec();
+  }
 }

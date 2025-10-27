@@ -673,6 +673,40 @@
 				]
 			}
 		},
+		"/upload/profile-picture": {
+			"post": {
+				"operationId": "UploadProfilePicture",
+				"responses": {
+					"200": {
+						"description": "Profile picture uploaded successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"url": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"url"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Upload"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/comments": {
 			"post": {
 				"operationId": "CreateComment",

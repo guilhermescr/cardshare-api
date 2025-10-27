@@ -19,6 +19,7 @@ export class UserMapper {
       fullName: user.fullName,
       username: user.username,
       email: includeEmail ? user.email : undefined,
+      profilePicture: user.profilePicture,
       bio: user.bio,
       isFollowing,
       following,
