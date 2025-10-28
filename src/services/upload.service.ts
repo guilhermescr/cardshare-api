@@ -38,4 +38,21 @@ export class UploadService {
       uploadStream.end(file.buffer);
     });
   }
+
+  public async removeProfilePicture(userId: string) {
+    const publicId = `profile-pictures/${userId}`;
+
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.destroy(publicId, async (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          await this.userRepository.findByIdAndUpdate(userId, {
+            profilePicture: null,
+          });
+          resolve(result);
+        }
+      });
+    });
+  }
 }

@@ -22,15 +22,11 @@ app.use(
 app.use('/users', authMiddleware);
 app.use('/cards', authMiddleware);
 app.use('/comments', authMiddleware);
+app.use('/upload', authMiddleware);
 
-app.post(
-  '/upload/profile-picture',
-  authMiddleware,
-  upload.single('file'),
-  (req, res, next) => {
-    next();
-  }
-);
+app.post('/upload/profile-picture', upload.single('file'), (req, res, next) => {
+  next();
+});
 
 RegisterRoutes(app);
 

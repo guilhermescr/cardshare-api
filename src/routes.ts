@@ -574,6 +574,51 @@ export function RegisterRoutes(app: Router) {
     }
   );
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUploadController_removeProfilePicture: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+  };
+  app.delete(
+    '/upload/profile-picture',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UploadController),
+    ...fetchMiddlewares<RequestHandler>(
+      UploadController.prototype.removeProfilePicture
+    ),
+
+    async function UploadController_removeProfilePicture(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUploadController_removeProfilePicture,
+          request,
+          response,
+        });
+
+        const controller = new UploadController();
+
+        await templateService.apiHandler({
+          methodName: 'removeProfilePicture',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: 200,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   const argsCommentsController_createComment: Record<
     string,
     TsoaRoute.ParameterSchema

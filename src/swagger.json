@@ -719,6 +719,38 @@
 					}
 				],
 				"parameters": []
+			},
+			"delete": {
+				"operationId": "RemoveProfilePicture",
+				"responses": {
+					"200": {
+						"description": "Profile picture removed successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Upload"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/comments": {
