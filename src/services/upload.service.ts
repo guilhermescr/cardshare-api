@@ -5,7 +5,7 @@ import { UserRepository } from '../repositories/user.repository';
 export class UploadService {
   private userRepository = new UserRepository();
 
-  public async uploadProfilePicture(
+  async uploadProfilePicture(
     file: Express.Multer.File,
     userId: string
   ): Promise<any> {
@@ -39,7 +39,7 @@ export class UploadService {
     });
   }
 
-  public async removeProfilePicture(userId: string) {
+  async removeProfilePicture(userId: string) {
     const publicId = `profile-pictures/${userId}`;
 
     return new Promise((resolve, reject) => {
