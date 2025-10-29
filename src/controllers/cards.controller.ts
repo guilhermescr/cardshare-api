@@ -43,13 +43,20 @@ export class CardsController extends Controller {
     if (!authenticatedUserId)
       throw { status: 401, message: 'User not authenticated.' };
 
-    return await this.cardsService.getCardsCursor(
+    const paginatedCards = await this.cardsService.getCardsCursor(
       authenticatedUserId,
       limit ?? 9,
       cursor,
       search,
       sortBy
     );
+
+    paginatedCards.items = paginatedCards.items.map((card) => ({
+      ...card,
+      isLiked: card.likes.includes(authenticatedUserId),
+    }));
+
+    return paginatedCards;
   }
 
   @Get('{id}')
