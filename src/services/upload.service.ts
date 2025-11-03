@@ -5,6 +5,32 @@ import { UserRepository } from '../repositories/user.repository';
 export class UploadService {
   private userRepository = new UserRepository();
 
+  async uploadFiles(files: Express.Multer.File[]): Promise<string[]> {
+    const uploadPromises = files.map((file) => {
+      return new Promise<string>((resolve, reject) => {
+        const fileExtension = file.originalname.split('.').pop();
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: 'card-media',
+            resource_type: fileExtension === 'mp4' ? 'video' : 'image',
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else if (result) {
+              resolve(result.secure_url);
+            } else {
+              reject({ status: 500, message: 'Upload result is undefined.' });
+            }
+          }
+        );
+        uploadStream.end(file.buffer);
+      });
+    });
+
+    return Promise.all(uploadPromises);
+  }
+
   async uploadProfilePicture(
     file: Express.Multer.File,
     userId: string

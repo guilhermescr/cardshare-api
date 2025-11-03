@@ -1,3 +1,4 @@
+import { Express } from 'express';
 import { RootFilterQuery, Types } from 'mongoose';
 import {
   CardDto,
@@ -10,6 +11,7 @@ import { CardMapper } from '../mappers/card.mapper';
 import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 import { User } from '../models/User';
 import { CardRepository } from '../repositories/card.repository';
+import { UploadService } from './upload.service';
 
 function paginateCards(cards: ICard[], limit: number) {
   const items = CardMapper.toDtoArray(cards.slice(0, limit));
@@ -20,6 +22,7 @@ function paginateCards(cards: ICard[], limit: number) {
 
 export class CardsService {
   private cardRepository = new CardRepository();
+  private uploadService = new UploadService();
 
   async getCardsCursor(
     authenticatedUserId: string,
@@ -178,11 +181,19 @@ export class CardsService {
 
   async createCard(
     authenticatedUserId: string,
-    createCardDto: CreateCardDto
+    createCardDto: CreateCardDto,
+    files?: Express.Multer.File[]
   ): Promise<CardDto | null> {
+    let mediaUrls: string[] = [];
+
+    if (files && files.length > 0) {
+      mediaUrls = await this.uploadService.uploadFiles(files);
+    }
+
     const card = await this.cardRepository.create({
       ...createCardDto,
       owner: new Types.ObjectId(authenticatedUserId),
+      mediaUrls,
     });
 
     return card ? CardMapper.toDto(card) : null;

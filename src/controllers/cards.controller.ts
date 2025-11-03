@@ -1,3 +1,4 @@
+import { Express } from 'express';
 import {
   Route,
   Get,
@@ -88,7 +89,12 @@ export class CardsController extends Controller {
     if (!authenticatedUserId)
       throw { status: 401, message: 'User not authenticated.' };
 
-    const card = await this.cardsService.createCard(authenticatedUserId, body);
+    const files = (req as any).files as Express.Multer.File[];
+    const card = await this.cardsService.createCard(
+      authenticatedUserId,
+      body,
+      files
+    );
     this.setStatus(201);
     return card;
   }

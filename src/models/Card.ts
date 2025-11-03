@@ -11,12 +11,17 @@ export interface ICard extends Document {
   _id: Types.ObjectId;
   title: string;
   description?: string | null;
-  imageUrl?: string | null;
+  mediaUrls: string[];
   visibility: CardVisibilityEnum;
   owner: Types.ObjectId | { _id: Types.ObjectId; username?: string };
   likes: Types.ObjectId[];
   favorites: Types.ObjectId[];
   comments: Types.ObjectId[];
+  tags: string[];
+  category: string;
+  gradient: string;
+  allowComments: boolean;
+  allowDownloads: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,9 +41,12 @@ const CardSchema = new Schema(
     description: {
       type: String,
     },
-    imageUrl: {
-      type: String,
-    },
+    mediaUrls: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
     visibility: {
       type: String,
       enum: Object.values(CardVisibilityEnum),
@@ -67,6 +75,28 @@ const CardSchema = new Schema(
         ref: 'Comment',
       },
     ],
+    tags: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
+    category: {
+      type: String,
+      required: false,
+    },
+    gradient: {
+      type: String,
+      required: false,
+    },
+    allowComments: {
+      type: Boolean,
+      default: true,
+    },
+    allowDownloads: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

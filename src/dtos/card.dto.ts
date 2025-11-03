@@ -1,4 +1,11 @@
-import { IsOptional, IsString, IsNotEmpty, IsEnum } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNotEmpty,
+  IsEnum,
+  IsArray,
+  IsBoolean,
+} from 'class-validator';
 import { CardVisibilityEnum } from '../models/Card';
 import { Transform } from 'class-transformer';
 import { CommentDto } from './comment.dto';
@@ -12,9 +19,10 @@ export class CreateCardDto {
   @IsOptional()
   description?: string;
 
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   @IsOptional()
-  imageUrl?: string;
+  mediaUrls?: string[];
 
   @IsEnum(CardVisibilityEnum)
   @IsOptional()
@@ -22,6 +30,27 @@ export class CreateCardDto {
     typeof value === 'string' ? value.toLowerCase() : value
   )
   visibility?: CardVisibilityEnum;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  @IsString()
+  @IsOptional()
+  category?: string;
+
+  @IsString()
+  @IsOptional()
+  gradient?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  allowComments?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  allowDownloads?: boolean;
 }
 
 export class UpdateCardDto {
@@ -33,9 +62,10 @@ export class UpdateCardDto {
   @IsOptional()
   description?: string;
 
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   @IsOptional()
-  imageUrl?: string;
+  mediaUrls?: string[];
 
   @IsEnum(CardVisibilityEnum)
   @IsOptional()
@@ -43,6 +73,27 @@ export class UpdateCardDto {
     typeof value === 'string' ? value.toLowerCase() : value
   )
   visibility?: CardVisibilityEnum;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  @IsString()
+  @IsOptional()
+  category?: string;
+
+  @IsString()
+  @IsOptional()
+  gradient?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  allowComments?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  allowDownloads?: boolean;
 }
 
 export class AuthorDto {
@@ -55,7 +106,7 @@ export class CardDto {
   id!: string;
   title!: string;
   description?: string | null;
-  imageUrl?: string | null;
+  mediaUrls!: string[];
   visibility!: CardVisibilityEnum;
   author!: AuthorDto;
   isLiked?: boolean;
@@ -63,6 +114,11 @@ export class CardDto {
   likes!: string[];
   favorites!: string[];
   comments!: string[];
+  tags!: string[];
+  category!: string;
+  gradient!: string;
+  allowComments!: boolean;
+  allowDownloads!: boolean;
   createdAt!: Date;
   updatedAt!: Date;
 }
@@ -71,7 +127,7 @@ export class PopulatedCardDto {
   id!: string;
   title!: string;
   description?: string | null;
-  imageUrl?: string | null;
+  mediaUrls!: string[];
   visibility!: CardVisibilityEnum;
   author!: AuthorDto;
   isLiked?: boolean;
@@ -79,6 +135,11 @@ export class PopulatedCardDto {
   likes!: string[];
   favorites!: string[];
   comments!: CommentDto[];
+  tags!: string[];
+  category!: string;
+  gradient!: string;
+  allowComments!: boolean;
+  allowDownloads!: boolean;
   createdAt!: Date;
   updatedAt!: Date;
 }

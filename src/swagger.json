@@ -45,9 +45,11 @@
 						"type": "string",
 						"nullable": true
 					},
-					"imageUrl": {
-						"type": "string",
-						"nullable": true
+					"mediaUrls": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					},
 					"visibility": {
 						"$ref": "#/components/schemas/CardVisibilityEnum"
@@ -79,6 +81,24 @@
 						},
 						"type": "array"
 					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"category": {
+						"type": "string"
+					},
+					"gradient": {
+						"type": "string"
+					},
+					"allowComments": {
+						"type": "boolean"
+					},
+					"allowDownloads": {
+						"type": "boolean"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -91,11 +111,17 @@
 				"required": [
 					"id",
 					"title",
+					"mediaUrls",
 					"visibility",
 					"author",
 					"likes",
 					"favorites",
 					"comments",
+					"tags",
+					"category",
+					"gradient",
+					"allowComments",
+					"allowDownloads",
 					"createdAt",
 					"updatedAt"
 				],
@@ -276,9 +302,11 @@
 						"type": "string",
 						"nullable": true
 					},
-					"imageUrl": {
-						"type": "string",
-						"nullable": true
+					"mediaUrls": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					},
 					"visibility": {
 						"$ref": "#/components/schemas/CardVisibilityEnum"
@@ -310,6 +338,24 @@
 						},
 						"type": "array"
 					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"category": {
+						"type": "string"
+					},
+					"gradient": {
+						"type": "string"
+					},
+					"allowComments": {
+						"type": "boolean"
+					},
+					"allowDownloads": {
+						"type": "boolean"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -322,11 +368,17 @@
 				"required": [
 					"id",
 					"title",
+					"mediaUrls",
 					"visibility",
 					"author",
 					"likes",
 					"favorites",
 					"comments",
+					"tags",
+					"category",
+					"gradient",
+					"allowComments",
+					"allowDownloads",
 					"createdAt",
 					"updatedAt"
 				],
@@ -341,11 +393,32 @@
 					"description": {
 						"type": "string"
 					},
-					"imageUrl": {
-						"type": "string"
+					"mediaUrls": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					},
 					"visibility": {
 						"$ref": "#/components/schemas/CardVisibilityEnum"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"category": {
+						"type": "string"
+					},
+					"gradient": {
+						"type": "string"
+					},
+					"allowComments": {
+						"type": "boolean"
+					},
+					"allowDownloads": {
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -362,11 +435,32 @@
 					"description": {
 						"type": "string"
 					},
-					"imageUrl": {
-						"type": "string"
+					"mediaUrls": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					},
 					"visibility": {
 						"$ref": "#/components/schemas/CardVisibilityEnum"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"category": {
+						"type": "string"
+					},
+					"gradient": {
+						"type": "string"
+					},
+					"allowComments": {
+						"type": "boolean"
+					},
+					"allowDownloads": {
+						"type": "boolean"
 					}
 				},
 				"type": "object",

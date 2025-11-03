@@ -49,7 +49,7 @@ export class CardMapper {
       id: card._id.toString(),
       title: card.title,
       description: card.description,
-      imageUrl: card.imageUrl,
+      mediaUrls: card.mediaUrls,
       visibility: card.visibility,
       author: {
         id: ownerId,
@@ -60,6 +60,11 @@ export class CardMapper {
       favorites:
         card.favorites?.map((id: Types.ObjectId) => id.toString()) ?? [],
       comments: card.comments?.map((id: Types.ObjectId) => id.toString()) ?? [],
+      tags: card.tags ?? [],
+      category: card.category ?? '',
+      gradient: card.gradient ?? '',
+      allowComments: card.allowComments ?? false,
+      allowDownloads: card.allowDownloads ?? false,
       createdAt: card.createdAt,
       updatedAt: card.updatedAt,
     };
@@ -78,7 +83,7 @@ export class CardMapper {
       id: card._id.toString(),
       title: card.title,
       description: card.description,
-      imageUrl: card.imageUrl,
+      mediaUrls: card.mediaUrls,
       visibility: card.visibility,
       author: {
         id: ownerId,
@@ -89,6 +94,11 @@ export class CardMapper {
       favorites:
         card.favorites?.map((id: Types.ObjectId) => id.toString()) ?? [],
       comments: CommentMapper.toDtoArray(card.comments),
+      tags: card.tags ?? [],
+      category: card.category ?? '',
+      gradient: card.gradient ?? '',
+      allowComments: card.allowComments ?? false,
+      allowDownloads: card.allowDownloads ?? false,
       createdAt: card.createdAt,
       updatedAt: card.updatedAt,
     };
