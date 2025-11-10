@@ -5,13 +5,16 @@ import { UserRepository } from '../repositories/user.repository';
 export class UploadService {
   private userRepository = new UserRepository();
 
-  async uploadFiles(files: Express.Multer.File[]): Promise<string[]> {
+  async uploadFiles(
+    files: Express.Multer.File[],
+    cardId: string
+  ): Promise<string[]> {
     const uploadPromises = files.map((file) => {
       return new Promise<string>((resolve, reject) => {
         const fileExtension = file.originalname.split('.').pop();
         const uploadStream = cloudinary.uploader.upload_stream(
           {
-            folder: 'card-media',
+            folder: `card-media/${cardId}`,
             resource_type: fileExtension === 'mp4' ? 'video' : 'image',
           },
           (error, result) => {
@@ -29,6 +32,23 @@ export class UploadService {
     });
 
     return Promise.all(uploadPromises);
+  }
+
+  async deleteFiles(cardId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const folderPrefix = `card-media/${cardId}/`;
+
+      cloudinary.api.delete_resources_by_prefix(
+        folderPrefix,
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+    });
   }
 
   async uploadProfilePicture(

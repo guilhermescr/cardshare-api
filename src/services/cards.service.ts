@@ -184,19 +184,28 @@ export class CardsService {
     createCardDto: CreateCardDto,
     files?: Express.Multer.File[]
   ): Promise<CardDto | null> {
-    let mediaUrls: string[] = [];
-
-    if (files && files.length > 0) {
-      mediaUrls = await this.uploadService.uploadFiles(files);
-    }
-
     const card = await this.cardRepository.create({
       ...createCardDto,
       owner: new Types.ObjectId(authenticatedUserId),
-      mediaUrls,
+      mediaUrls: [],
     });
 
-    return card ? CardMapper.toDto(card) : null;
+    if (!card) return null;
+
+    let mediaUrls: string[] = [];
+    if (files && files.length > 0) {
+      mediaUrls = await this.uploadService.uploadFiles(
+        files,
+        card._id.toString()
+      );
+    }
+
+    const updatedCard = await this.cardRepository.findOneAndUpdate(
+      { _id: card._id },
+      { mediaUrls }
+    );
+
+    return updatedCard ? CardMapper.toDto(updatedCard) : null;
   }
 
   async updateCard(
@@ -224,6 +233,13 @@ export class CardsService {
       _id: cardId,
       owner: new Types.ObjectId(authenticatedUserId),
     };
+
+    const card = await this.cardRepository.findOne(query);
+
+    if (!card) return null;
+
+    await this.uploadService.deleteFiles(cardId);
+
     const result = await this.cardRepository.findOneAndDelete(query);
 
     return result ? CardMapper.toDto(result) : null;

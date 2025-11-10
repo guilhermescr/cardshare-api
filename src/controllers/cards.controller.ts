@@ -95,6 +95,9 @@ export class CardsController extends Controller {
       body,
       files
     );
+
+    if (!card) throw { status: 500, message: 'Failed to create card.' };
+
     this.setStatus(201);
     return card;
   }
@@ -134,7 +137,9 @@ export class CardsController extends Controller {
       authenticatedUserId,
       id
     );
+
     if (!deletedCard) throw { status: 404, message: 'Card not found.' };
+
     this.setStatus(204);
   }
 
