@@ -25,12 +25,14 @@ import {
 import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 import { Request as ExpressRequest } from 'express';
 import { AuthenticatedRequest } from '../types/auth';
+import { AIService, GeneratedCardResponse } from '../services/ai.service';
 
 @Route('cards')
 @Tags('Cards')
 @Security('jwt')
 export class CardsController extends Controller {
   private cardsService = new CardsService();
+  private aiService = new AIService();
 
   @Get('/')
   public async getCards(
@@ -187,5 +189,30 @@ export class CardsController extends Controller {
       updatedCard.favorites.includes(authenticatedUserId);
 
     return updatedCard;
+  }
+
+  @Post('/generate')
+  public async generateCard(): Promise<GeneratedCardResponse> {
+    try {
+      const generatedCard = await this.aiService.generateCard();
+
+      if (
+        !generatedCard.title ||
+        !generatedCard.description ||
+        !generatedCard.category ||
+        !generatedCard.gradient
+      ) {
+        throw {
+          status: 500,
+          message:
+            'Invalid response structure from AI API. Missing required fields.',
+        };
+      }
+
+      return generatedCard;
+    } catch (error) {
+      console.error('Error generating card:', error);
+      throw error;
+    }
   }
 }

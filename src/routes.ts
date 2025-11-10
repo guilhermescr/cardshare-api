@@ -268,6 +268,19 @@ const models: TsoaRoute.Models = {
     additionalProperties: false,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  GeneratedCardResponse: {
+    dataType: 'refObject',
+    properties: {
+      title: { dataType: 'string', required: true },
+      description: { dataType: 'string', required: true },
+      category: { dataType: 'string', required: true },
+      gradient: { dataType: 'string', required: true },
+      visibility: { dataType: 'enum', enums: ['public'], required: true },
+      allowComments: { dataType: 'boolean', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   RegisterDto: {
     dataType: 'refObject',
     properties: {
@@ -1093,6 +1106,47 @@ export function RegisterRoutes(app: Router) {
 
         await templateService.apiHandler({
           methodName: 'toggleFavoriteCard',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsCardsController_generateCard: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {};
+  app.post(
+    '/cards/generate',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(CardsController),
+    ...fetchMiddlewares<RequestHandler>(CardsController.prototype.generateCard),
+
+    async function CardsController_generateCard(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsCardsController_generateCard,
+          request,
+          response,
+        });
+
+        const controller = new CardsController();
+
+        await templateService.apiHandler({
+          methodName: 'generateCard',
           controller,
           response,
           next,

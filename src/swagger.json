@@ -466,6 +466,42 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GeneratedCardResponse": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string"
+					},
+					"gradient": {
+						"type": "string"
+					},
+					"visibility": {
+						"type": "string",
+						"enum": [
+							"public"
+						],
+						"nullable": false
+					},
+					"allowComments": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"title",
+					"description",
+					"category",
+					"gradient",
+					"visibility",
+					"allowComments"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"RegisterDto": {
 				"properties": {
 					"fullName": {
@@ -1256,6 +1292,32 @@
 						}
 					}
 				]
+			}
+		},
+		"/cards/generate": {
+			"post": {
+				"operationId": "GenerateCard",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GeneratedCardResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Cards"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/auth/register": {
