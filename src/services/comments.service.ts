@@ -42,6 +42,12 @@ export class CommentsService {
     return result ? CommentMapper.toDto(result) : null;
   }
 
+  async deleteCommentsByCardId(cardId: string): Promise<void> {
+    await this.commentRepository.deleteMany({
+      card: new Types.ObjectId(cardId),
+    });
+  }
+
   async toggleLikeComment(
     commentId: string,
     userId: string

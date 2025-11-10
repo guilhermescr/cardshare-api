@@ -26,4 +26,8 @@ export class CommentRepository {
   async findOneAndDelete(query: any): Promise<IComment | null> {
     return Comment.findOneAndDelete(query).exec();
   }
+
+  async deleteMany(query: any): Promise<void> {
+    await Comment.deleteMany(query).exec();
+  }
 }

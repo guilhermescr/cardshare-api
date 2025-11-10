@@ -12,6 +12,7 @@ import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 import { User } from '../models/User';
 import { CardRepository } from '../repositories/card.repository';
 import { UploadService } from './upload.service';
+import { CommentsService } from './comments.service';
 
 function paginateCards(cards: ICard[], limit: number) {
   const items = CardMapper.toDtoArray(cards.slice(0, limit));
@@ -23,6 +24,7 @@ function paginateCards(cards: ICard[], limit: number) {
 export class CardsService {
   private cardRepository = new CardRepository();
   private uploadService = new UploadService();
+  private commentsService = new CommentsService();
 
   async getCardsCursor(
     authenticatedUserId: string,
@@ -239,6 +241,8 @@ export class CardsService {
     if (!card) return null;
 
     await this.uploadService.deleteFiles(cardId);
+
+    await this.commentsService.deleteCommentsByCardId(cardId);
 
     const result = await this.cardRepository.findOneAndDelete(query);
 
