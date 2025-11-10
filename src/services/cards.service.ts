@@ -240,7 +240,14 @@ export class CardsService {
 
     if (!card) return null;
 
-    await this.uploadService.deleteFiles(cardId);
+    try {
+      await this.uploadService.deleteFiles(cardId);
+    } catch (error: any) {
+      console.error(
+        `Error deleting media files for card ${cardId}:`,
+        error.message || error
+      );
+    }
 
     await this.commentsService.deleteCommentsByCardId(cardId);
 
