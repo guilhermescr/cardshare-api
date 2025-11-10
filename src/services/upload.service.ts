@@ -35,16 +35,25 @@ export class UploadService {
   }
 
   async deleteFiles(cardId: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const folderPrefix = `card-media/${cardId}/`;
+    const folderPrefix = `card-media/${cardId}/`;
 
+    return new Promise((resolve, reject) => {
       cloudinary.api.delete_resources_by_prefix(
         folderPrefix,
-        (error, result) => {
+        (error: Error) => {
           if (error) {
             reject(error);
           } else {
-            resolve(result);
+            cloudinary.api.delete_folder(
+              folderPrefix,
+              (folderError: Error | null, folderResult: any) => {
+                if (folderError) {
+                  reject(folderError);
+                } else {
+                  resolve(folderResult);
+                }
+              }
+            );
           }
         }
       );
