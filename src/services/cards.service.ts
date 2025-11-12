@@ -4,6 +4,7 @@ import {
   CardDto,
   CreateCardDto,
   PopulatedCardDto,
+  RelatedCardDto,
   UpdateCardDto,
 } from '../dtos/card.dto';
 import { CardVisibilityEnum, ICard } from '../models/Card';
@@ -342,5 +343,27 @@ export class CardsService {
         profilePicture: ownerData.profilePicture,
       },
     };
+  }
+
+  async getRelatedCards(
+    cardId: string,
+    limit: number
+  ): Promise<RelatedCardDto[]> {
+    const card = await this.cardRepository.findById(cardId);
+
+    if (!card) throw { status: 404, message: 'Card not found.' };
+
+    const query = {
+      _id: { $ne: cardId },
+      visibility: CardVisibilityEnum.public,
+      $or: [{ tags: { $in: card.tags } }, { category: card.category }],
+    };
+
+    const relatedCards = await this.cardRepository.find(query, {
+      sort: { _id: -1 },
+      limit,
+    });
+
+    return CardMapper.toRelatedCardDtoArray(relatedCards);
   }
 }

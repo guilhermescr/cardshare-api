@@ -277,6 +277,43 @@ const models: TsoaRoute.Models = {
       gradient: { dataType: 'string', required: true },
       visibility: { dataType: 'enum', enums: ['public'], required: true },
       allowComments: { dataType: 'boolean', required: true },
+      tags: {
+        dataType: 'array',
+        array: { dataType: 'string' },
+        required: true,
+      },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  RelatedCardDto: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      title: { dataType: 'string', required: true },
+      author: {
+        dataType: 'nestedObjectLiteral',
+        nestedProperties: {
+          profilePicture: { dataType: 'string' },
+          username: { dataType: 'string' },
+          id: { dataType: 'string', required: true },
+        },
+        required: true,
+      },
+      gradient: { dataType: 'string', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  PaginatedResponseDto_RelatedCardDto_: {
+    dataType: 'refObject',
+    properties: {
+      items: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'RelatedCardDto' },
+        required: true,
+      },
+      nextCursor: { dataType: 'string' },
     },
     additionalProperties: false,
   },
@@ -1147,6 +1184,53 @@ export function RegisterRoutes(app: Router) {
 
         await templateService.apiHandler({
           methodName: 'generateCard',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsCardsController_getRelatedCards: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    id: { in: 'path', name: 'id', required: true, dataType: 'string' },
+    limit: { default: 3, in: 'query', name: 'limit', dataType: 'double' },
+  };
+  app.get(
+    '/cards/:id/related',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(CardsController),
+    ...fetchMiddlewares<RequestHandler>(
+      CardsController.prototype.getRelatedCards
+    ),
+
+    async function CardsController_getRelatedCards(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsCardsController_getRelatedCards,
+          request,
+          response,
+        });
+
+        const controller = new CardsController();
+
+        await templateService.apiHandler({
+          methodName: 'getRelatedCards',
           controller,
           response,
           next,

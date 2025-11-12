@@ -143,3 +143,14 @@ export class PopulatedCardDto {
   createdAt!: Date;
   updatedAt!: Date;
 }
+
+export interface RelatedCardDto {
+  id: string;
+  title: string;
+  author: {
+    id: string;
+    username?: string;
+    profilePicture?: string;
+  };
+  gradient: string;
+}

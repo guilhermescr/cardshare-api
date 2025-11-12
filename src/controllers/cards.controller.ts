@@ -21,6 +21,7 @@ import {
   UpdateCardDto,
   CardDto,
   PopulatedCardDto,
+  RelatedCardDto,
 } from '../dtos/card.dto';
 import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 import { Request as ExpressRequest } from 'express';
@@ -214,5 +215,23 @@ export class CardsController extends Controller {
       console.error('Error generating card:', error);
       throw error;
     }
+  }
+
+  @Get('{id}/related')
+  @Response(404, 'Card not found')
+  public async getRelatedCards(
+    @Request() req: ExpressRequest,
+    @Path() id: string,
+    @Query() limit: number = 3
+  ): Promise<PaginatedResponseDto<RelatedCardDto>> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+    if (!authenticatedUserId)
+      throw { status: 401, message: 'User not authenticated.' };
+
+    const relatedCards = await this.cardsService.getRelatedCards(id, limit);
+
+    return {
+      items: relatedCards,
+    };
   }
 }

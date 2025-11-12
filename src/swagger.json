@@ -489,6 +489,12 @@
 					},
 					"allowComments": {
 						"type": "boolean"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -497,7 +503,64 @@
 					"category",
 					"gradient",
 					"visibility",
-					"allowComments"
+					"allowComments",
+					"tags"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RelatedCardDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"author": {
+						"properties": {
+							"profilePicture": {
+								"type": "string"
+							},
+							"username": {
+								"type": "string"
+							},
+							"id": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"type": "object"
+					},
+					"gradient": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"author",
+					"gradient"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaginatedResponseDto_RelatedCardDto_": {
+				"properties": {
+					"items": {
+						"items": {
+							"$ref": "#/components/schemas/RelatedCardDto"
+						},
+						"type": "array"
+					},
+					"nextCursor": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"items"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1318,6 +1381,54 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/cards/{id}/related": {
+			"get": {
+				"operationId": "GetRelatedCards",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PaginatedResponseDto_RelatedCardDto_"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Card not found"
+					}
+				},
+				"tags": [
+					"Cards"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 3,
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/auth/register": {

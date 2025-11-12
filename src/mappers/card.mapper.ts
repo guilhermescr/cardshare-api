@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { CardDto, PopulatedCardDto } from '../dtos/card.dto';
+import { CardDto, PopulatedCardDto, RelatedCardDto } from '../dtos/card.dto';
 import { ICard, IPopulatedCard } from '../models/Card';
 import { CommentMapper } from './comment.mapper';
 
@@ -106,5 +106,26 @@ export class CardMapper {
 
   static toPopulatedDtoArray(cards: IPopulatedCard[]): PopulatedCardDto[] {
     return cards.map((card) => this.toPopulatedDto(card));
+  }
+
+  static toRelatedCardDto(card: ICard): RelatedCardDto {
+    const { ownerId, ownerUsername, profilePicture } = this.extractOwnerData(
+      card.owner
+    );
+
+    return {
+      id: card._id.toString(),
+      title: card.title,
+      author: {
+        id: ownerId,
+        username: ownerUsername,
+        profilePicture,
+      },
+      gradient: card.gradient,
+    };
+  }
+
+  static toRelatedCardDtoArray(cards: ICard[]): RelatedCardDto[] {
+    return cards.map((card) => this.toRelatedCardDto(card));
   }
 }
