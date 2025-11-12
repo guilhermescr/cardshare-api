@@ -41,7 +41,7 @@ export class AIService {
         "gradient": one of ["aurora", "blush", "emerald", "sunrise", "orchid", "ocean", "ash"],
         "visibility": "public",
         "allowComments": true,
-        "tags": ["string", "string", ...] // Add an array of tags based on the description
+        "tags": ["string", "string", ...] // Generate between 3 and 10 random tags based on the description
       }
       `;
 
