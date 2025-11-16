@@ -17,6 +17,7 @@ import { CardsService } from '../services/cards.service';
 import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 import { CardDto } from '../dtos/card.dto';
 import { UserDto } from '../dtos/user.dto';
+import { NotificationService } from '../services/notification.service';
 
 @Route('users')
 @Tags('Users')
@@ -24,6 +25,7 @@ import { UserDto } from '../dtos/user.dto';
 export class UsersController extends Controller {
   private usersService = new UsersService();
   private cardsService = new CardsService();
+  private notificationService = new NotificationService();
 
   @Get('{id}')
   @Response(401, 'User not authenticated')
@@ -70,13 +72,16 @@ export class UsersController extends Controller {
     @Request() req: ExpressRequest,
     @Path() id: string
   ): Promise<{ following: boolean }> {
-    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
-    if (!authenticatedUserId)
+    const authenticatedUser = (req as AuthenticatedRequest).user;
+
+    if (!authenticatedUser)
       throw { status: 401, message: 'User not authenticated.' };
+
     const isFollowing = await this.usersService.toggleFollowUser(
-      authenticatedUserId,
+      authenticatedUser,
       id
     );
+
     return { following: isFollowing };
   }
 

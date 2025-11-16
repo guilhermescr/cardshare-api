@@ -1,4 +1,6 @@
 import mongoose, { Document, Types } from 'mongoose';
+import { IUser } from './User';
+import { ICard } from './Card';
 
 export interface IComment extends Document {
   _id: Types.ObjectId;
@@ -9,6 +11,11 @@ export interface IComment extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type IPopulatedComment = Omit<IComment, 'author' | 'card'> & {
+  author: Pick<IUser, '_id' | 'username' | 'profilePicture'>;
+  card: Pick<ICard, '_id' | 'owner'>;
+};
 
 const { Schema } = mongoose;
 

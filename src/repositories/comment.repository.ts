@@ -1,15 +1,32 @@
-import { Comment, IComment } from '../models/Comment';
+import { Comment, IComment, IPopulatedComment } from '../models/Comment';
 
 export class CommentRepository {
-  async create(data: Partial<IComment>): Promise<IComment> {
-    const comment = new Comment(data);
-    await comment.save();
-    await comment.populate('author', 'username profilePicture');
-    return comment;
-  }
-
   async findById(commentId: string): Promise<IComment | null> {
     return Comment.findById(commentId).exec();
+  }
+
+  async findByIdPopulated(
+    commentId: string
+  ): Promise<IPopulatedComment | null> {
+    return Comment.findById(commentId)
+      .populate('author', 'username profilePicture')
+      .populate('card', 'owner')
+      .exec() as Promise<IPopulatedComment | null>;
+  }
+
+  async findOneAndDelete(query: any): Promise<IPopulatedComment | null> {
+    return Comment.findOneAndDelete(query)
+      .populate('author', 'username profilePicture')
+      .populate('card', 'owner')
+      .exec() as Promise<IPopulatedComment | null>;
+  }
+
+  async create(data: Partial<IComment>): Promise<IPopulatedComment> {
+    const comment = new Comment(data);
+    await comment.save();
+    return this.findByIdPopulated(
+      comment._id.toString()
+    ) as Promise<IPopulatedComment>;
   }
 
   async update(
@@ -21,10 +38,6 @@ export class CommentRepository {
 
   async delete(commentId: string): Promise<IComment | null> {
     return Comment.findByIdAndDelete(commentId).exec();
-  }
-
-  async findOneAndDelete(query: any): Promise<IComment | null> {
-    return Comment.findOneAndDelete(query).exec();
   }
 
   async deleteMany(query: any): Promise<void> {

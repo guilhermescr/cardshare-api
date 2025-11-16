@@ -4,8 +4,6 @@
 import type { TsoaRoute } from '@tsoa/runtime';
 import { fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UsersController } from './controllers/users.controller';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UploadController } from './controllers/upload.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CommentsController } from './controllers/comments.controller';
@@ -13,6 +11,10 @@ import { CommentsController } from './controllers/comments.controller';
 import { CardsController } from './controllers/cards.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './controllers/auth.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { NotificationsController } from './controllers/notification.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { UsersController } from './controllers/users.controller';
 import type {
   Request as ExRequest,
   Response as ExResponse,
@@ -24,11 +26,6 @@ import { expressAuthenticationRecasted } from './middlewares/auth.middleware';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-  CardVisibilityEnum: {
-    dataType: 'refEnum',
-    enums: ['private', 'public', 'unlisted'],
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   AuthorDto: {
     dataType: 'refObject',
     properties: {
@@ -37,6 +34,38 @@ const models: TsoaRoute.Models = {
       profilePicture: { dataType: 'string' },
     },
     additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  CommentDto: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      cardId: { dataType: 'string', required: true },
+      author: { ref: 'AuthorDto', required: true },
+      content: { dataType: 'string', required: true },
+      likes: {
+        dataType: 'array',
+        array: { dataType: 'string' },
+        required: true,
+      },
+      createdAt: { dataType: 'datetime', required: true },
+      updatedAt: { dataType: 'datetime', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  CreateCommentDto: {
+    dataType: 'refObject',
+    properties: {
+      cardId: { dataType: 'string', required: true },
+      content: { dataType: 'string', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  CardVisibilityEnum: {
+    dataType: 'refEnum',
+    enums: ['private', 'public', 'unlisted'],
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   CardDto: {
@@ -90,61 +119,6 @@ const models: TsoaRoute.Models = {
     additionalProperties: false,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  UserRefDto: {
-    dataType: 'refObject',
-    properties: {
-      id: { dataType: 'string', required: true },
-      username: { dataType: 'string', required: true },
-    },
-    additionalProperties: false,
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  UserDto: {
-    dataType: 'refObject',
-    properties: {
-      id: { dataType: 'string', required: true },
-      fullName: { dataType: 'string', required: true },
-      username: { dataType: 'string', required: true },
-      email: { dataType: 'string' },
-      profilePicture: {
-        dataType: 'union',
-        subSchemas: [
-          { dataType: 'string' },
-          { dataType: 'enum', enums: [null] },
-        ],
-        required: true,
-      },
-      bio: { dataType: 'string', required: true },
-      cards: {
-        dataType: 'array',
-        array: { dataType: 'refObject', ref: 'CardDto' },
-        required: true,
-      },
-      favorites: {
-        dataType: 'array',
-        array: { dataType: 'refObject', ref: 'CardDto' },
-        required: true,
-      },
-      likes: {
-        dataType: 'array',
-        array: { dataType: 'refObject', ref: 'CardDto' },
-        required: true,
-      },
-      isFollowing: { dataType: 'boolean', required: true },
-      following: {
-        dataType: 'array',
-        array: { dataType: 'refObject', ref: 'UserRefDto' },
-        required: true,
-      },
-      followers: {
-        dataType: 'array',
-        array: { dataType: 'refObject', ref: 'UserRefDto' },
-        required: true,
-      },
-    },
-    additionalProperties: false,
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   PaginatedResponseDto_CardDto_: {
     dataType: 'refObject',
     properties: {
@@ -154,33 +128,6 @@ const models: TsoaRoute.Models = {
         required: true,
       },
       nextCursor: { dataType: 'string' },
-    },
-    additionalProperties: false,
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  CommentDto: {
-    dataType: 'refObject',
-    properties: {
-      id: { dataType: 'string', required: true },
-      cardId: { dataType: 'string', required: true },
-      author: { ref: 'AuthorDto', required: true },
-      content: { dataType: 'string', required: true },
-      likes: {
-        dataType: 'array',
-        array: { dataType: 'string' },
-        required: true,
-      },
-      createdAt: { dataType: 'datetime', required: true },
-      updatedAt: { dataType: 'datetime', required: true },
-    },
-    additionalProperties: false,
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  CreateCommentDto: {
-    dataType: 'refObject',
-    properties: {
-      cardId: { dataType: 'string', required: true },
-      content: { dataType: 'string', required: true },
     },
     additionalProperties: false,
   },
@@ -338,6 +285,81 @@ const models: TsoaRoute.Models = {
     additionalProperties: false,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  NotificationType: {
+    dataType: 'refEnum',
+    enums: ['card_like', 'comment_like', 'comment', 'follow', 'other'],
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  NotificationDto: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      type: { ref: 'NotificationType', required: true },
+      message: { dataType: 'string', required: true },
+      sender: { dataType: 'string', required: true },
+      recipient: { dataType: 'string', required: true },
+      cardId: { dataType: 'string' },
+      read: { dataType: 'boolean', required: true },
+      createdAt: { dataType: 'string', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  UserRefDto: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      username: { dataType: 'string', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  UserDto: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      fullName: { dataType: 'string', required: true },
+      username: { dataType: 'string', required: true },
+      email: { dataType: 'string' },
+      profilePicture: {
+        dataType: 'union',
+        subSchemas: [
+          { dataType: 'string' },
+          { dataType: 'enum', enums: [null] },
+        ],
+        required: true,
+      },
+      bio: { dataType: 'string', required: true },
+      cards: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'CardDto' },
+        required: true,
+      },
+      favorites: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'CardDto' },
+        required: true,
+      },
+      likes: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'CardDto' },
+        required: true,
+      },
+      isFollowing: { dataType: 'boolean', required: true },
+      following: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'UserRefDto' },
+        required: true,
+      },
+      followers: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'UserRefDto' },
+        required: true,
+      },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const templateService = new ExpressTemplateService(models, {
   noImplicitAdditionalProperties: 'throw-on-extras',
@@ -352,257 +374,6 @@ export function RegisterRoutes(app: Router) {
   //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
   // ###########################################################################################################
 
-  const argsUsersController_getUserById: Record<
-    string,
-    TsoaRoute.ParameterSchema
-  > = {
-    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
-    id: { in: 'path', name: 'id', required: true, dataType: 'string' },
-  };
-  app.get(
-    '/users/:id',
-    authenticateMiddleware([{ jwt: [] }]),
-    ...fetchMiddlewares<RequestHandler>(UsersController),
-    ...fetchMiddlewares<RequestHandler>(UsersController.prototype.getUserById),
-
-    async function UsersController_getUserById(
-      request: ExRequest,
-      response: ExResponse,
-      next: any
-    ) {
-      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({
-          args: argsUsersController_getUserById,
-          request,
-          response,
-        });
-
-        const controller = new UsersController();
-
-        await templateService.apiHandler({
-          methodName: 'getUserById',
-          controller,
-          response,
-          next,
-          validatedArgs,
-          successStatus: undefined,
-        });
-      } catch (err) {
-        return next(err);
-      }
-    }
-  );
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  const argsUsersController_getUserByUsername: Record<
-    string,
-    TsoaRoute.ParameterSchema
-  > = {
-    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
-    username: {
-      in: 'path',
-      name: 'username',
-      required: true,
-      dataType: 'string',
-    },
-  };
-  app.get(
-    '/users/username/:username',
-    authenticateMiddleware([{ jwt: [] }]),
-    ...fetchMiddlewares<RequestHandler>(UsersController),
-    ...fetchMiddlewares<RequestHandler>(
-      UsersController.prototype.getUserByUsername
-    ),
-
-    async function UsersController_getUserByUsername(
-      request: ExRequest,
-      response: ExResponse,
-      next: any
-    ) {
-      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({
-          args: argsUsersController_getUserByUsername,
-          request,
-          response,
-        });
-
-        const controller = new UsersController();
-
-        await templateService.apiHandler({
-          methodName: 'getUserByUsername',
-          controller,
-          response,
-          next,
-          validatedArgs,
-          successStatus: undefined,
-        });
-      } catch (err) {
-        return next(err);
-      }
-    }
-  );
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  const argsUsersController_toggleFollowUser: Record<
-    string,
-    TsoaRoute.ParameterSchema
-  > = {
-    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
-    id: { in: 'path', name: 'id', required: true, dataType: 'string' },
-  };
-  app.post(
-    '/users/:id/follow',
-    authenticateMiddleware([{ jwt: [] }]),
-    ...fetchMiddlewares<RequestHandler>(UsersController),
-    ...fetchMiddlewares<RequestHandler>(
-      UsersController.prototype.toggleFollowUser
-    ),
-
-    async function UsersController_toggleFollowUser(
-      request: ExRequest,
-      response: ExResponse,
-      next: any
-    ) {
-      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({
-          args: argsUsersController_toggleFollowUser,
-          request,
-          response,
-        });
-
-        const controller = new UsersController();
-
-        await templateService.apiHandler({
-          methodName: 'toggleFollowUser',
-          controller,
-          response,
-          next,
-          validatedArgs,
-          successStatus: undefined,
-        });
-      } catch (err) {
-        return next(err);
-      }
-    }
-  );
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  const argsUsersController_getMyCards: Record<
-    string,
-    TsoaRoute.ParameterSchema
-  > = {
-    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
-    limit: { in: 'query', name: 'limit', dataType: 'double' },
-    cursor: { in: 'query', name: 'cursor', dataType: 'string' },
-    sortBy: {
-      in: 'query',
-      name: 'sortBy',
-      dataType: 'union',
-      subSchemas: [
-        { dataType: 'enum', enums: ['latest'] },
-        { dataType: 'enum', enums: ['most-liked'] },
-      ],
-    },
-  };
-  app.get(
-    '/users/me/cards',
-    authenticateMiddleware([{ jwt: [] }]),
-    ...fetchMiddlewares<RequestHandler>(UsersController),
-    ...fetchMiddlewares<RequestHandler>(UsersController.prototype.getMyCards),
-
-    async function UsersController_getMyCards(
-      request: ExRequest,
-      response: ExResponse,
-      next: any
-    ) {
-      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({
-          args: argsUsersController_getMyCards,
-          request,
-          response,
-        });
-
-        const controller = new UsersController();
-
-        await templateService.apiHandler({
-          methodName: 'getMyCards',
-          controller,
-          response,
-          next,
-          validatedArgs,
-          successStatus: undefined,
-        });
-      } catch (err) {
-        return next(err);
-      }
-    }
-  );
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  const argsUsersController_getMyLikedCards: Record<
-    string,
-    TsoaRoute.ParameterSchema
-  > = {
-    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
-    limit: { in: 'query', name: 'limit', dataType: 'double' },
-    cursor: { in: 'query', name: 'cursor', dataType: 'string' },
-    sortBy: {
-      in: 'query',
-      name: 'sortBy',
-      dataType: 'union',
-      subSchemas: [
-        { dataType: 'enum', enums: ['latest'] },
-        { dataType: 'enum', enums: ['most-liked'] },
-      ],
-    },
-  };
-  app.get(
-    '/users/me/liked',
-    authenticateMiddleware([{ jwt: [] }]),
-    ...fetchMiddlewares<RequestHandler>(UsersController),
-    ...fetchMiddlewares<RequestHandler>(
-      UsersController.prototype.getMyLikedCards
-    ),
-
-    async function UsersController_getMyLikedCards(
-      request: ExRequest,
-      response: ExResponse,
-      next: any
-    ) {
-      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({
-          args: argsUsersController_getMyLikedCards,
-          request,
-          response,
-        });
-
-        const controller = new UsersController();
-
-        await templateService.apiHandler({
-          methodName: 'getMyLikedCards',
-          controller,
-          response,
-          next,
-          validatedArgs,
-          successStatus: undefined,
-        });
-      } catch (err) {
-        return next(err);
-      }
-    }
-  );
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   const argsUploadController_uploadProfilePicture: Record<
     string,
     TsoaRoute.ParameterSchema
@@ -1352,6 +1123,348 @@ export function RegisterRoutes(app: Router) {
 
         await templateService.apiHandler({
           methodName: 'login',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsNotificationsController_getNotifications: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+  };
+  app.get(
+    '/notifications',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(NotificationsController),
+    ...fetchMiddlewares<RequestHandler>(
+      NotificationsController.prototype.getNotifications
+    ),
+
+    async function NotificationsController_getNotifications(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsNotificationsController_getNotifications,
+          request,
+          response,
+        });
+
+        const controller = new NotificationsController();
+
+        await templateService.apiHandler({
+          methodName: 'getNotifications',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsNotificationsController_markAsRead: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    id: { in: 'path', name: 'id', required: true, dataType: 'string' },
+  };
+  app.put(
+    '/notifications/:id/read',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(NotificationsController),
+    ...fetchMiddlewares<RequestHandler>(
+      NotificationsController.prototype.markAsRead
+    ),
+
+    async function NotificationsController_markAsRead(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsNotificationsController_markAsRead,
+          request,
+          response,
+        });
+
+        const controller = new NotificationsController();
+
+        await templateService.apiHandler({
+          methodName: 'markAsRead',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUsersController_getUserById: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    id: { in: 'path', name: 'id', required: true, dataType: 'string' },
+  };
+  app.get(
+    '/users/:id',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UsersController),
+    ...fetchMiddlewares<RequestHandler>(UsersController.prototype.getUserById),
+
+    async function UsersController_getUserById(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUsersController_getUserById,
+          request,
+          response,
+        });
+
+        const controller = new UsersController();
+
+        await templateService.apiHandler({
+          methodName: 'getUserById',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUsersController_getUserByUsername: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    username: {
+      in: 'path',
+      name: 'username',
+      required: true,
+      dataType: 'string',
+    },
+  };
+  app.get(
+    '/users/username/:username',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UsersController),
+    ...fetchMiddlewares<RequestHandler>(
+      UsersController.prototype.getUserByUsername
+    ),
+
+    async function UsersController_getUserByUsername(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUsersController_getUserByUsername,
+          request,
+          response,
+        });
+
+        const controller = new UsersController();
+
+        await templateService.apiHandler({
+          methodName: 'getUserByUsername',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUsersController_toggleFollowUser: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    id: { in: 'path', name: 'id', required: true, dataType: 'string' },
+  };
+  app.post(
+    '/users/:id/follow',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UsersController),
+    ...fetchMiddlewares<RequestHandler>(
+      UsersController.prototype.toggleFollowUser
+    ),
+
+    async function UsersController_toggleFollowUser(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUsersController_toggleFollowUser,
+          request,
+          response,
+        });
+
+        const controller = new UsersController();
+
+        await templateService.apiHandler({
+          methodName: 'toggleFollowUser',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUsersController_getMyCards: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    limit: { in: 'query', name: 'limit', dataType: 'double' },
+    cursor: { in: 'query', name: 'cursor', dataType: 'string' },
+    sortBy: {
+      in: 'query',
+      name: 'sortBy',
+      dataType: 'union',
+      subSchemas: [
+        { dataType: 'enum', enums: ['latest'] },
+        { dataType: 'enum', enums: ['most-liked'] },
+      ],
+    },
+  };
+  app.get(
+    '/users/me/cards',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UsersController),
+    ...fetchMiddlewares<RequestHandler>(UsersController.prototype.getMyCards),
+
+    async function UsersController_getMyCards(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUsersController_getMyCards,
+          request,
+          response,
+        });
+
+        const controller = new UsersController();
+
+        await templateService.apiHandler({
+          methodName: 'getMyCards',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUsersController_getMyLikedCards: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    limit: { in: 'query', name: 'limit', dataType: 'double' },
+    cursor: { in: 'query', name: 'cursor', dataType: 'string' },
+    sortBy: {
+      in: 'query',
+      name: 'sortBy',
+      dataType: 'union',
+      subSchemas: [
+        { dataType: 'enum', enums: ['latest'] },
+        { dataType: 'enum', enums: ['most-liked'] },
+      ],
+    },
+  };
+  app.get(
+    '/users/me/liked',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UsersController),
+    ...fetchMiddlewares<RequestHandler>(
+      UsersController.prototype.getMyLikedCards
+    ),
+
+    async function UsersController_getMyLikedCards(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUsersController_getMyLikedCards,
+          request,
+          response,
+        });
+
+        const controller = new UsersController();
+
+        await templateService.apiHandler({
+          methodName: 'getMyLikedCards',
           controller,
           response,
           next,

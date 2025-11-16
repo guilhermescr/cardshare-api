@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import http from 'http';
+import { Server } from 'socket.io';
 import { errorHandler } from './middlewares/errorHandler';
 import { setupSwagger } from './swagger';
 import { RegisterRoutes } from './routes';
@@ -11,6 +13,14 @@ import upload from './middlewares/upload.middleware';
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.UI_BASE_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+  },
+});
 
 app.use(
   express.json({
@@ -26,7 +36,7 @@ app.use(
 
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: process.env.UI_BASE_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
@@ -53,10 +63,19 @@ mongoose.connection.on('connected', () =>
   console.log('Database connection established!')
 );
 
-const PORT = process.env.PORT || 3000;
+io.on('connection', (socket) => {
+  socket.on('join', (userId) => {
+    socket.join(userId);
+  });
 
-app.listen(PORT, () => {
-  console.log(`API is running on http://localhost:${PORT}`);
+  socket.on('disconnect', () => {});
 });
 
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+  console.log(`API is running on ${process.env.API_BASE_URL}`);
+});
+
+export { io };
 export default app;

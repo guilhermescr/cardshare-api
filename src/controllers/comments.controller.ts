@@ -48,14 +48,16 @@ export class CommentsController extends Controller {
     @Request() req: AuthenticatedRequest,
     @Path() id: string
   ): Promise<CommentDto> {
-    const authenticatedUserId = req.user?.id;
-    if (!authenticatedUserId) {
+    const authenticatedUser = (req as AuthenticatedRequest).user;
+
+    if (!authenticatedUser) {
       throw { status: 401, message: 'User not authenticated.' };
     }
 
     const updatedComment = await this.commentsService.toggleLikeComment(
+      authenticatedUser.username,
       id,
-      authenticatedUserId
+      authenticatedUser.id
     );
 
     if (!updatedComment) {
@@ -76,11 +78,8 @@ export class CommentsController extends Controller {
     if (!authenticatedUserId)
       throw { status: 401, message: 'User not authenticated.' };
 
-    const deletedComment = await this.commentsService.deleteComment(
-      authenticatedUserId,
-      id
-    );
-    if (!deletedComment) throw { status: 404, message: 'Comment not found.' };
+    await this.commentsService.deleteComment(authenticatedUserId, id);
+
     this.setStatus(204);
   }
 }

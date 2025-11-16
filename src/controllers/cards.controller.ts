@@ -27,6 +27,7 @@ import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 import { Request as ExpressRequest } from 'express';
 import { AuthenticatedRequest } from '../types/auth';
 import { AIService, GeneratedCardResponse } from '../services/ai.service';
+import { NotificationService } from '../services/notification.service';
 
 @Route('cards')
 @Tags('Cards')
@@ -34,6 +35,7 @@ import { AIService, GeneratedCardResponse } from '../services/ai.service';
 export class CardsController extends Controller {
   private cardsService = new CardsService();
   private aiService = new AIService();
+  private notificationService = new NotificationService();
 
   @Get('/')
   public async getCards(
@@ -151,16 +153,17 @@ export class CardsController extends Controller {
     @Request() req: ExpressRequest,
     @Path() id: string
   ): Promise<CardDto | null> {
-    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
-    if (!authenticatedUserId)
+    const authenticatedUser = (req as AuthenticatedRequest).user;
+
+    if (!authenticatedUser)
       throw { status: 401, message: 'User not authenticated.' };
 
+    const authenticatedUserId = authenticatedUser.id;
+
     const updatedCard = await this.cardsService.toggleLikeCard(
-      authenticatedUserId,
+      authenticatedUser,
       id
     );
-
-    if (!updatedCard) throw { status: 404, message: 'Card not found.' };
 
     updatedCard.isLiked = updatedCard.likes.includes(authenticatedUserId);
     updatedCard.isFavorited =

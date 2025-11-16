@@ -7,14 +7,6 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"CardVisibilityEnum": {
-				"enum": [
-					"private",
-					"public",
-					"unlisted"
-				],
-				"type": "string"
-			},
 			"AuthorDto": {
 				"properties": {
 					"id": {
@@ -32,6 +24,71 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"CommentDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"cardId": {
+						"type": "string"
+					},
+					"author": {
+						"$ref": "#/components/schemas/AuthorDto"
+					},
+					"content": {
+						"type": "string"
+					},
+					"likes": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"cardId",
+					"author",
+					"content",
+					"likes",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateCommentDto": {
+				"properties": {
+					"cardId": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"cardId",
+					"content"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CardVisibilityEnum": {
+				"enum": [
+					"private",
+					"public",
+					"unlisted"
+				],
+				"type": "string"
 			},
 			"CardDto": {
 				"properties": {
@@ -128,93 +185,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UserRefDto": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"username": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"username"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"UserDto": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"fullName": {
-						"type": "string"
-					},
-					"username": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"profilePicture": {
-						"type": "string",
-						"nullable": true
-					},
-					"bio": {
-						"type": "string"
-					},
-					"cards": {
-						"items": {
-							"$ref": "#/components/schemas/CardDto"
-						},
-						"type": "array"
-					},
-					"favorites": {
-						"items": {
-							"$ref": "#/components/schemas/CardDto"
-						},
-						"type": "array"
-					},
-					"likes": {
-						"items": {
-							"$ref": "#/components/schemas/CardDto"
-						},
-						"type": "array"
-					},
-					"isFollowing": {
-						"type": "boolean"
-					},
-					"following": {
-						"items": {
-							"$ref": "#/components/schemas/UserRefDto"
-						},
-						"type": "array"
-					},
-					"followers": {
-						"items": {
-							"$ref": "#/components/schemas/UserRefDto"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"id",
-					"fullName",
-					"username",
-					"profilePicture",
-					"bio",
-					"cards",
-					"favorites",
-					"likes",
-					"isFollowing",
-					"following",
-					"followers"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"PaginatedResponseDto_CardDto_": {
 				"properties": {
 					"items": {
@@ -229,63 +199,6 @@
 				},
 				"required": [
 					"items"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CommentDto": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"cardId": {
-						"type": "string"
-					},
-					"author": {
-						"$ref": "#/components/schemas/AuthorDto"
-					},
-					"content": {
-						"type": "string"
-					},
-					"likes": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"cardId",
-					"author",
-					"content",
-					"likes",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CreateCommentDto": {
-				"properties": {
-					"cardId": {
-						"type": "string"
-					},
-					"content": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"cardId",
-					"content"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -610,6 +523,142 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"NotificationType": {
+				"enum": [
+					"card_like",
+					"comment_like",
+					"comment",
+					"follow",
+					"other"
+				],
+				"type": "string"
+			},
+			"NotificationDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"type": {
+						"$ref": "#/components/schemas/NotificationType"
+					},
+					"message": {
+						"type": "string"
+					},
+					"sender": {
+						"type": "string"
+					},
+					"recipient": {
+						"type": "string"
+					},
+					"cardId": {
+						"type": "string"
+					},
+					"read": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"type",
+					"message",
+					"sender",
+					"recipient",
+					"read",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserRefDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"username"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"fullName": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"profilePicture": {
+						"type": "string",
+						"nullable": true
+					},
+					"bio": {
+						"type": "string"
+					},
+					"cards": {
+						"items": {
+							"$ref": "#/components/schemas/CardDto"
+						},
+						"type": "array"
+					},
+					"favorites": {
+						"items": {
+							"$ref": "#/components/schemas/CardDto"
+						},
+						"type": "array"
+					},
+					"likes": {
+						"items": {
+							"$ref": "#/components/schemas/CardDto"
+						},
+						"type": "array"
+					},
+					"isFollowing": {
+						"type": "boolean"
+					},
+					"following": {
+						"items": {
+							"$ref": "#/components/schemas/UserRefDto"
+						},
+						"type": "array"
+					},
+					"followers": {
+						"items": {
+							"$ref": "#/components/schemas/UserRefDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"fullName",
+					"username",
+					"profilePicture",
+					"bio",
+					"cards",
+					"favorites",
+					"likes",
+					"isFollowing",
+					"following",
+					"followers"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -624,262 +673,6 @@
 		"contact": {}
 	},
 	"paths": {
-		"/users/{id}": {
-			"get": {
-				"operationId": "GetUserById",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"user": {
-											"$ref": "#/components/schemas/UserDto"
-										}
-									},
-									"required": [
-										"user"
-									],
-									"type": "object"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "User not authenticated"
-					},
-					"404": {
-						"description": "User not found"
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/users/username/{username}": {
-			"get": {
-				"operationId": "GetUserByUsername",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"user": {
-											"$ref": "#/components/schemas/UserDto"
-										}
-									},
-									"required": [
-										"user"
-									],
-									"type": "object"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "User not authenticated"
-					},
-					"404": {
-						"description": "User not found"
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "username",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/users/{id}/follow": {
-			"post": {
-				"operationId": "ToggleFollowUser",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"following": {
-											"type": "boolean"
-										}
-									},
-									"required": [
-										"following"
-									],
-									"type": "object"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "User not authenticated"
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/users/me/cards": {
-			"get": {
-				"operationId": "GetMyCards",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PaginatedResponseDto_CardDto_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "limit",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "cursor",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortBy",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"latest",
-								"most-liked"
-							]
-						}
-					}
-				]
-			}
-		},
-		"/users/me/liked": {
-			"get": {
-				"operationId": "GetMyLikedCards",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PaginatedResponseDto_CardDto_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "limit",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "cursor",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortBy",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"latest",
-								"most-liked"
-							]
-						}
-					}
-				]
-			}
-		},
 		"/upload/profile-picture": {
 			"post": {
 				"operationId": "UploadProfilePicture",
@@ -1531,6 +1324,329 @@
 						}
 					}
 				}
+			}
+		},
+		"/notifications": {
+			"get": {
+				"operationId": "GetNotifications",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/NotificationDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Notifications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/notifications/{id}/read": {
+			"put": {
+				"operationId": "MarkAsRead",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/NotificationDto"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Notification not found"
+					}
+				},
+				"tags": [
+					"Notifications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/{id}": {
+			"get": {
+				"operationId": "GetUserById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"user": {
+											"$ref": "#/components/schemas/UserDto"
+										}
+									},
+									"required": [
+										"user"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "User not authenticated"
+					},
+					"404": {
+						"description": "User not found"
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/username/{username}": {
+			"get": {
+				"operationId": "GetUserByUsername",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"user": {
+											"$ref": "#/components/schemas/UserDto"
+										}
+									},
+									"required": [
+										"user"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "User not authenticated"
+					},
+					"404": {
+						"description": "User not found"
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "username",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/{id}/follow": {
+			"post": {
+				"operationId": "ToggleFollowUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"following": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"following"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "User not authenticated"
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/me/cards": {
+			"get": {
+				"operationId": "GetMyCards",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PaginatedResponseDto_CardDto_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "cursor",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"latest",
+								"most-liked"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/users/me/liked": {
+			"get": {
+				"operationId": "GetMyLikedCards",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PaginatedResponseDto_CardDto_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "cursor",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"latest",
+								"most-liked"
+							]
+						}
+					}
+				]
 			}
 		}
 	},

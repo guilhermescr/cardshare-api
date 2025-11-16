@@ -14,6 +14,10 @@ import { User } from '../models/User';
 import { CardRepository } from '../repositories/card.repository';
 import { UploadService } from './upload.service';
 import { CommentsService } from './comments.service';
+import { NotificationType } from '../models/Notification';
+import { NotificationService } from './notification.service';
+import { AuthPayloadDto } from '../dtos/auth.dto';
+import { NotificationEmitterService } from './notification-emitter.service';
 
 function paginateCards(cards: ICard[], limit: number) {
   const items = CardMapper.toDtoArray(cards.slice(0, limit));
@@ -26,6 +30,8 @@ export class CardsService {
   private cardRepository = new CardRepository();
   private uploadService = new UploadService();
   private commentsService = new CommentsService();
+  private notificationService = new NotificationService();
+  private notificationEmitterService = new NotificationEmitterService();
 
   async getCardsCursor(
     authenticatedUserId: string,
@@ -258,9 +264,11 @@ export class CardsService {
   }
 
   async toggleLikeCard(
-    authenticatedUserId: string,
+    authenticatedUser: AuthPayloadDto,
     cardId: string
-  ): Promise<CardDto | null> {
+  ): Promise<CardDto> {
+    const authenticatedUserId = authenticatedUser.id;
+
     const query = {
       _id: cardId,
       $or: [
@@ -282,13 +290,39 @@ export class CardsService {
     let updateDto;
     if (hasLiked) {
       updateDto = { $pull: { likes: userObjectId } };
+
+      const notification =
+        await this.notificationService.deleteNotificationByTypeAndSender({
+          type: [NotificationType.CardLike],
+          sender: authenticatedUserId,
+          recipient: card.owner._id.toString(),
+          cardId: cardId,
+        });
+
+      if (notification) {
+        this.notificationEmitterService.emitNotificationRemoval(
+          notification.id,
+          card.owner._id.toString()
+        );
+      }
     } else {
       updateDto = { $addToSet: { likes: userObjectId } };
+
+      await this.notificationService.createAndEmitNotification({
+        type: NotificationType.CardLike,
+        message: `liked your card "${card.title}"`,
+        sender: authenticatedUserId,
+        recipient: card.owner._id.toString(),
+        cardId: cardId,
+        read: false,
+      });
     }
 
     const updatedCard = await this.cardRepository.update(cardId, updateDto);
 
-    if (!updatedCard) return null;
+    if (!updatedCard) {
+      throw { status: 500, message: 'Failed to update card.' };
+    }
 
     const ownerData = CardMapper.extractOwnerData(card.owner);
     return {

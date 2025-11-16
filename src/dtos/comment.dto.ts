@@ -13,7 +13,10 @@ export class CreateCommentDto {
 
 export class CommentDto {
   id!: string;
-  cardId!: string;
+  card!: {
+    id: string;
+    owner?: string;
+  };
   author!: AuthorDto;
   content!: string;
   likes!: string[];

@@ -99,7 +99,7 @@ export class UpdateCardDto {
 export class AuthorDto {
   id!: string;
   username?: string;
-  profilePicture?: string;
+  profilePicture?: string | null;
 }
 
 export class CardDto {

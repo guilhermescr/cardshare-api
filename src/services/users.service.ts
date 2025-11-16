@@ -1,11 +1,17 @@
+import { AuthPayloadDto } from '../dtos/auth.dto';
 import { UserDto, UserRefDto } from '../dtos/user.dto';
 import { UserMapper } from '../mappers/user.mapper';
 import { Card, CardVisibilityEnum } from '../models/Card';
+import { NotificationType } from '../models/Notification';
 import { IUser } from '../models/User';
 import { UserRepository } from '../repositories/user.repository';
+import { NotificationEmitterService } from './notification-emitter.service';
+import { NotificationService } from './notification.service';
 
 export class UsersService {
   private userRepository = new UserRepository();
+  private notificationService = new NotificationService();
+  private notificationEmitterService = new NotificationEmitterService();
 
   async getUserById(
     authenticatedUserId: string,
@@ -32,9 +38,11 @@ export class UsersService {
   }
 
   async toggleFollowUser(
-    authenticatedUserId: string,
+    authenticatedUser: AuthPayloadDto,
     targetUserId: string
   ): Promise<boolean> {
+    const authenticatedUserId = authenticatedUser.id;
+
     if (authenticatedUserId === targetUserId)
       throw { status: 400, message: "You can't follow yourself." };
 
@@ -57,6 +65,20 @@ export class UsersService {
         { _id: authenticatedUserId },
         { $pull: { following: targetUserId } }
       );
+
+      const notification =
+        await this.notificationService.deleteNotificationByTypeAndSender({
+          type: [NotificationType.Follow],
+          sender: authenticatedUserId,
+          recipient: targetUserId,
+        });
+
+      if (notification) {
+        this.notificationEmitterService.emitNotificationRemoval(
+          notification.id,
+          targetUserId
+        );
+      }
     } else {
       await this.userRepository.updateOne(
         { _id: targetUserId },
@@ -66,6 +88,14 @@ export class UsersService {
         { _id: authenticatedUserId },
         { $addToSet: { following: targetUserId } }
       );
+
+      await this.notificationService.createAndEmitNotification({
+        type: NotificationType.Follow,
+        message: `started following you.`,
+        sender: authenticatedUserId,
+        recipient: targetUserId,
+        read: false,
+      });
     }
 
     return !isFollowing;
