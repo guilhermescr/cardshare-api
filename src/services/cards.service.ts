@@ -266,7 +266,7 @@ export class CardsService {
   async toggleLikeCard(
     authenticatedUser: AuthPayloadDto,
     cardId: string
-  ): Promise<CardDto> {
+  ): Promise<PopulatedCardDto> {
     const authenticatedUserId = authenticatedUser.id;
 
     const query = {
@@ -318,7 +318,9 @@ export class CardsService {
       });
     }
 
-    const updatedCard = await this.cardRepository.update(cardId, updateDto);
+    await this.cardRepository.update(cardId, updateDto);
+
+    const updatedCard = await this.cardRepository.findByIdPopulated(cardId);
 
     if (!updatedCard) {
       throw { status: 500, message: 'Failed to update card.' };
@@ -326,7 +328,7 @@ export class CardsService {
 
     const ownerData = CardMapper.extractOwnerData(card.owner);
     return {
-      ...CardMapper.toDto(updatedCard),
+      ...CardMapper.toPopulatedDto(updatedCard),
       author: {
         id: ownerData.ownerId,
         username: ownerData.ownerUsername,
@@ -338,7 +340,7 @@ export class CardsService {
   async toggleFavoriteCard(
     authenticatedUserId: string,
     cardId: string
-  ): Promise<CardDto | null> {
+  ): Promise<PopulatedCardDto> {
     const query = {
       _id: cardId,
       $or: [
@@ -364,13 +366,15 @@ export class CardsService {
       updateDto = { $addToSet: { favorites: userObjectId } };
     }
 
-    const updatedCard = await this.cardRepository.update(cardId, updateDto);
+    await this.cardRepository.update(cardId, updateDto);
 
-    if (!updatedCard) return null;
+    const updatedCard = await this.cardRepository.findByIdPopulated(cardId);
+
+    if (!updatedCard) throw { status: 500, message: 'Failed to update card.' };
 
     const ownerData = CardMapper.extractOwnerData(card.owner);
     return {
-      ...CardMapper.toDto(updatedCard),
+      ...CardMapper.toPopulatedDto(updatedCard),
       author: {
         id: ownerData.ownerId,
         username: ownerData.ownerUsername,

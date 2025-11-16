@@ -1109,12 +1109,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/CardDto"
-										}
-									],
-									"nullable": true
+									"$ref": "#/components/schemas/PopulatedCardDto"
 								}
 							}
 						}
@@ -1149,12 +1144,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/CardDto"
-										}
-									],
-									"nullable": true
+									"$ref": "#/components/schemas/PopulatedCardDto"
 								}
 							}
 						}

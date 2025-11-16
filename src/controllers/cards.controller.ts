@@ -152,7 +152,7 @@ export class CardsController extends Controller {
   public async toggleLikeCard(
     @Request() req: ExpressRequest,
     @Path() id: string
-  ): Promise<CardDto | null> {
+  ): Promise<PopulatedCardDto> {
     const authenticatedUser = (req as AuthenticatedRequest).user;
 
     if (!authenticatedUser)
@@ -176,7 +176,7 @@ export class CardsController extends Controller {
   public async toggleFavoriteCard(
     @Request() req: ExpressRequest,
     @Path() id: string
-  ): Promise<CardDto | null> {
+  ): Promise<PopulatedCardDto> {
     const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
     if (!authenticatedUserId)
       throw { status: 401, message: 'User not authenticated.' };
@@ -185,8 +185,6 @@ export class CardsController extends Controller {
       authenticatedUserId,
       id
     );
-
-    if (!updatedCard) throw { status: 404, message: 'Card not found.' };
 
     updatedCard.isLiked = updatedCard.likes.includes(authenticatedUserId);
     updatedCard.isFavorited =

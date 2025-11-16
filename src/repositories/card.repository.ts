@@ -14,6 +14,20 @@ export class CardRepository {
       .exec();
   }
 
+  async findByIdPopulated(cardId: string): Promise<IPopulatedCard | null> {
+    const card = await Card.findById(cardId)
+      .populate('owner', 'username profilePicture')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+          select: 'username profilePicture',
+        },
+      })
+      .exec();
+    return card as IPopulatedCard | null;
+  }
+
   async findOne(query: any): Promise<IPopulatedCard | null> {
     return Card.findOne(query)
       .populate('owner', 'username profilePicture')
