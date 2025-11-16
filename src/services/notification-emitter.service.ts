@@ -38,14 +38,4 @@ export class NotificationEmitterService {
       io.to(recipientId).emit('remove-notification', { notificationIds });
     });
   }
-
-  /**
-   * Remove all listeners for a specific user (optional cleanup method).
-   */
-  removeListenersForUser(userId: string): void {
-    const socket = io.sockets.sockets.get(userId);
-    if (socket) {
-      socket.removeAllListeners();
-    }
-  }
 }
