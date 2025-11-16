@@ -258,6 +258,8 @@ export class CardsService {
 
     await this.commentsService.deleteCommentsByCardId(cardId);
 
+    await this.notificationService.deleteNotificationsByCardId(cardId);
+
     const result = await this.cardRepository.findOneAndDelete(query);
 
     return result ? CardMapper.toDto(result) : null;
@@ -301,7 +303,7 @@ export class CardsService {
 
       if (notification) {
         this.notificationEmitterService.emitNotificationRemoval(
-          notification.id,
+          [notification.id],
           card.owner._id.toString()
         );
       }

@@ -1,6 +1,10 @@
 import { Notification, INotification } from '../models/Notification';
 
 export class NotificationRepository {
+  async findMany(query: any): Promise<INotification[]> {
+    return Notification.find(query).exec();
+  }
+
   async findByRecipient(
     userId: string,
     options: { sort?: any; limit?: number } = {}
@@ -48,6 +52,10 @@ export class NotificationRepository {
 
   async deleteAllByRecipient(userId: string): Promise<void> {
     await Notification.deleteMany({ recipient: userId }).exec();
+  }
+
+  async deleteMany(query: any): Promise<void> {
+    await Notification.deleteMany(query).exec();
   }
 
   async deleteOne(query: any): Promise<void> {

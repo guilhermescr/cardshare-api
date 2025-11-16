@@ -75,7 +75,7 @@ export class UsersService {
 
       if (notification) {
         this.notificationEmitterService.emitNotificationRemoval(
-          notification.id,
+          [notification.id],
           targetUserId
         );
       }

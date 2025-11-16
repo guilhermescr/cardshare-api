@@ -18,7 +18,7 @@ type CreateAndEmitNotificationParams = {
 type DeleteNotificationByTypeAndSenderParams = {
   type: NotificationType[];
   sender: string;
-  recipient: string;
+  recipient?: string;
   cardId?: string;
   commentId?: string;
 };
@@ -101,8 +101,11 @@ export class NotificationService {
     const query: any = {
       type: { $in: type },
       sender: new Types.ObjectId(sender),
-      recipient: new Types.ObjectId(recipient),
     };
+
+    if (recipient) {
+      query.recipient = new Types.ObjectId(recipient);
+    }
 
     if (cardId) {
       query.cardId = new Types.ObjectId(cardId);
@@ -123,6 +126,29 @@ export class NotificationService {
     await this.notificationRepository.deleteOne(query);
 
     return NotificationMapper.toDto(notification);
+  }
+
+  async deleteNotificationsByCardId(cardId: string): Promise<void> {
+    const notifications = await this.notificationRepository.findMany({
+      cardId: new Types.ObjectId(cardId),
+    });
+
+    if (!notifications || notifications.length === 0) {
+      return;
+    }
+
+    const notificationData = notifications.map((notification) => ({
+      notificationId: notification._id.toString(),
+      recipientId: notification.recipient.toString(),
+    }));
+
+    await this.notificationRepository.deleteMany({
+      cardId: new Types.ObjectId(cardId),
+    });
+
+    this.notificationEmitterService.emitNotificationRemovalToMultipleRecipients(
+      notificationData
+    );
   }
 
   async deleteAllNotificationsForUser(userId: string): Promise<void> {

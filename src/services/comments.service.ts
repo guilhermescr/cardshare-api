@@ -77,7 +77,7 @@ export class CommentsService {
 
       if (notification) {
         this.notificationEmitterService.emitNotificationRemoval(
-          notification.id,
+          [notification.id],
           mappedComment.card.owner
         );
       }
@@ -118,7 +118,7 @@ export class CommentsService {
 
       if (notification) {
         this.notificationEmitterService.emitNotificationRemoval(
-          notification.id,
+          [notification.id],
           comment.author.toString()
         );
       }
