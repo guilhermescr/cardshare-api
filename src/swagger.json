@@ -16,7 +16,8 @@
 						"type": "string"
 					},
 					"profilePicture": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"required": [
@@ -30,8 +31,19 @@
 					"id": {
 						"type": "string"
 					},
-					"cardId": {
-						"type": "string"
+					"card": {
+						"properties": {
+							"owner": {
+								"type": "string"
+							},
+							"id": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"type": "object"
 					},
 					"author": {
 						"$ref": "#/components/schemas/AuthorDto"
@@ -56,7 +68,7 @@
 				},
 				"required": [
 					"id",
-					"cardId",
+					"card",
 					"author",
 					"content",
 					"likes",
@@ -546,7 +558,25 @@
 						"type": "string"
 					},
 					"sender": {
-						"type": "string"
+						"properties": {
+							"username": {
+								"type": "string",
+								"nullable": true
+							},
+							"profilePicture": {
+								"type": "string",
+								"nullable": true
+							},
+							"id": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"username",
+							"profilePicture",
+							"id"
+						],
+						"type": "object"
 					},
 					"recipient": {
 						"type": "string"
@@ -1391,6 +1421,28 @@
 						}
 					}
 				]
+			}
+		},
+		"/notifications/read-all": {
+			"put": {
+				"operationId": "ReadAll",
+				"responses": {
+					"204": {
+						"description": "No content"
+					},
+					"401": {
+						"description": "User not authenticated"
+					}
+				},
+				"tags": [
+					"Notifications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/users/{id}": {

@@ -80,6 +80,13 @@ export class NotificationService {
     return notification ? NotificationMapper.toDto(notification) : null;
   }
 
+  async markAllNotificationsAsRead(userId: string): Promise<void> {
+    await this.notificationRepository.updateMany(
+      { recipient: new Types.ObjectId(userId), read: false },
+      { read: true }
+    );
+  }
+
   async deleteNotification(notificationId: string): Promise<void> {
     await this.notificationRepository.deleteById(notificationId);
   }

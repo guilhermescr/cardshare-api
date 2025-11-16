@@ -55,4 +55,18 @@ export class NotificationsController extends Controller {
 
     return notification;
   }
+
+  @Put('/read-all')
+  @Response(401, 'User not authenticated')
+  public async readAll(@Request() req: ExpressRequest): Promise<void> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+
+    if (!authenticatedUserId) {
+      throw { status: 401, message: 'User not authenticated.' };
+    }
+
+    await this.notificationService.markAllNotificationsAsRead(
+      authenticatedUserId
+    );
+  }
 }

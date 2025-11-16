@@ -30,6 +30,10 @@ export class NotificationRepository {
     return notification;
   }
 
+  async updateMany(filter: any, update: Partial<INotification>): Promise<void> {
+    await Notification.updateMany(filter, update).exec();
+  }
+
   async markAsRead(notificationId: string): Promise<INotification | null> {
     return Notification.findByIdAndUpdate(
       notificationId,

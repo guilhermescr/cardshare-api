@@ -31,7 +31,13 @@ const models: TsoaRoute.Models = {
     properties: {
       id: { dataType: 'string', required: true },
       username: { dataType: 'string' },
-      profilePicture: { dataType: 'string' },
+      profilePicture: {
+        dataType: 'union',
+        subSchemas: [
+          { dataType: 'string' },
+          { dataType: 'enum', enums: [null] },
+        ],
+      },
     },
     additionalProperties: false,
   },
@@ -40,7 +46,14 @@ const models: TsoaRoute.Models = {
     dataType: 'refObject',
     properties: {
       id: { dataType: 'string', required: true },
-      cardId: { dataType: 'string', required: true },
+      card: {
+        dataType: 'nestedObjectLiteral',
+        nestedProperties: {
+          owner: { dataType: 'string' },
+          id: { dataType: 'string', required: true },
+        },
+        required: true,
+      },
       author: { ref: 'AuthorDto', required: true },
       content: { dataType: 'string', required: true },
       likes: {
@@ -296,7 +309,29 @@ const models: TsoaRoute.Models = {
       id: { dataType: 'string', required: true },
       type: { ref: 'NotificationType', required: true },
       message: { dataType: 'string', required: true },
-      sender: { dataType: 'string', required: true },
+      sender: {
+        dataType: 'nestedObjectLiteral',
+        nestedProperties: {
+          username: {
+            dataType: 'union',
+            subSchemas: [
+              { dataType: 'string' },
+              { dataType: 'enum', enums: [null] },
+            ],
+            required: true,
+          },
+          profilePicture: {
+            dataType: 'union',
+            subSchemas: [
+              { dataType: 'string' },
+              { dataType: 'enum', enums: [null] },
+            ],
+            required: true,
+          },
+          id: { dataType: 'string', required: true },
+        },
+        required: true,
+      },
       recipient: { dataType: 'string', required: true },
       cardId: { dataType: 'string' },
       read: { dataType: 'boolean', required: true },
@@ -1214,6 +1249,51 @@ export function RegisterRoutes(app: Router) {
 
         await templateService.apiHandler({
           methodName: 'markAsRead',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsNotificationsController_readAll: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+  };
+  app.put(
+    '/notifications/read-all',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(NotificationsController),
+    ...fetchMiddlewares<RequestHandler>(
+      NotificationsController.prototype.readAll
+    ),
+
+    async function NotificationsController_readAll(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsNotificationsController_readAll,
+          request,
+          response,
+        });
+
+        const controller = new NotificationsController();
+
+        await templateService.apiHandler({
+          methodName: 'readAll',
           controller,
           response,
           next,
