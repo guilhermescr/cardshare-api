@@ -395,6 +395,21 @@ const models: TsoaRoute.Models = {
     additionalProperties: false,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  PaginatedPageResponseDto_UserDto_: {
+    dataType: 'refObject',
+    properties: {
+      items: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'UserDto' },
+        required: true,
+      },
+      nextCursor: { dataType: 'string' },
+      page: { dataType: 'double', required: true },
+      totalPages: { dataType: 'double', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const templateService = new ExpressTemplateService(models, {
   noImplicitAdditionalProperties: 'throw-on-extras',
@@ -1347,6 +1362,51 @@ export function RegisterRoutes(app: Router) {
 
         await templateService.apiHandler({
           methodName: 'readAll',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUsersController_getUsers: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    search: { in: 'query', name: 'search', dataType: 'string' },
+    page: { in: 'query', name: 'page', dataType: 'double' },
+  };
+  app.get(
+    '/users',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UsersController),
+    ...fetchMiddlewares<RequestHandler>(UsersController.prototype.getUsers),
+
+    async function UsersController_getUsers(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUsersController_getUsers,
+          request,
+          response,
+        });
+
+        const controller = new UsersController();
+
+        await templateService.apiHandler({
+          methodName: 'getUsers',
           controller,
           response,
           next,

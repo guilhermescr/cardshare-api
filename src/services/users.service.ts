@@ -1,4 +1,5 @@
 import { AuthPayloadDto } from '../dtos/auth.dto';
+import { PaginatedPageResponseDto } from '../dtos/paginatedResponse.dto';
 import { UserDto, UserRefDto } from '../dtos/user.dto';
 import { UserMapper } from '../mappers/user.mapper';
 import { Card, CardVisibilityEnum } from '../models/Card';
@@ -12,6 +13,40 @@ export class UsersService {
   private userRepository = new UserRepository();
   private notificationService = new NotificationService();
   private notificationEmitterService = new NotificationEmitterService();
+
+  async getUsers(
+    search?: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<PaginatedPageResponseDto<UserDto>> {
+    const query: any = {};
+
+    if (search) {
+      query.$or = [
+        { username: { $regex: search, $options: 'i' } },
+        { fullName: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const totalUsers = await this.userRepository.count(query);
+
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    const users = await this.userRepository.findPaginated(
+      query,
+      '_id username fullName',
+      'username',
+      1,
+      page,
+      limit
+    );
+
+    const userDtos = await Promise.all(
+      users.map((user) => this.buildUserDto(user, false))
+    );
+
+    return { items: userDtos, page, totalPages };
+  }
 
   async getUserById(
     authenticatedUserId: string,

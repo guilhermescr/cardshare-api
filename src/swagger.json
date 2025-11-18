@@ -689,6 +689,34 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"PaginatedPageResponseDto_UserDto_": {
+				"properties": {
+					"items": {
+						"items": {
+							"$ref": "#/components/schemas/UserDto"
+						},
+						"type": "array"
+					},
+					"nextCursor": {
+						"type": "string"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"items",
+					"page",
+					"totalPages"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -1497,6 +1525,53 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/users": {
+			"get": {
+				"operationId": "GetUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PaginatedPageResponseDto_UserDto_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "User not authenticated"
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/users/{id}": {

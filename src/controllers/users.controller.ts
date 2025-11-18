@@ -14,10 +14,12 @@ import { UsersService } from '../services/users.service';
 import { AuthenticatedRequest } from '../types/auth';
 import { Request as ExpressRequest } from 'express';
 import { CardsService } from '../services/cards.service';
-import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
+import {
+  PaginatedPageResponseDto,
+  PaginatedResponseDto,
+} from '../dtos/paginatedResponse.dto';
 import { CardDto } from '../dtos/card.dto';
 import { UserDto } from '../dtos/user.dto';
-import { NotificationService } from '../services/notification.service';
 
 @Route('users')
 @Tags('Users')
@@ -25,7 +27,24 @@ import { NotificationService } from '../services/notification.service';
 export class UsersController extends Controller {
   private usersService = new UsersService();
   private cardsService = new CardsService();
-  private notificationService = new NotificationService();
+
+  @Get('/')
+  @Response(401, 'User not authenticated')
+  public async getUsers(
+    @Request() req: ExpressRequest,
+    @Query() search?: string,
+    @Query() page?: number
+  ): Promise<PaginatedPageResponseDto<UserDto>> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+
+    if (!authenticatedUserId) {
+      throw { status: 401, message: 'User not authenticated.' };
+    }
+
+    const currentPage = page && page > 0 ? page : 1;
+
+    return this.usersService.getUsers(search, currentPage, 10);
+  }
 
   @Get('{id}')
   @Response(401, 'User not authenticated')

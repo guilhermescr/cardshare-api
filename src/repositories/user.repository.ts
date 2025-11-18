@@ -1,8 +1,29 @@
 import { User, IUser } from '../models/User';
 
 export class UserRepository {
+  async count(query: any): Promise<number> {
+    return User.countDocuments(query).exec();
+  }
+
   async find(query: any, projection?: string): Promise<IUser[]> {
     return User.find(query, projection).exec();
+  }
+
+  async findPaginated(
+    query: any,
+    projection?: string,
+    sortField: string = 'username',
+    sortOrder: 1 | -1 = 1,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<IUser[]> {
+    const skip = (page - 1) * limit;
+
+    return User.find(query, projection)
+      .sort({ [sortField]: sortOrder })
+      .skip(skip)
+      .limit(limit)
+      .exec();
   }
 
   async findById(userId: string): Promise<IUser | null> {
