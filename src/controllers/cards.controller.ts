@@ -27,7 +27,6 @@ import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
 import { Request as ExpressRequest } from 'express';
 import { AuthenticatedRequest } from '../types/auth';
 import { AIService, GeneratedCardResponse } from '../services/ai.service';
-import { NotificationService } from '../services/notification.service';
 
 @Route('cards')
 @Tags('Cards')
@@ -35,7 +34,6 @@ import { NotificationService } from '../services/notification.service';
 export class CardsController extends Controller {
   private cardsService = new CardsService();
   private aiService = new AIService();
-  private notificationService = new NotificationService();
 
   @Get('/')
   public async getCards(
@@ -115,15 +113,21 @@ export class CardsController extends Controller {
     @Body() body: UpdateCardDto
   ): Promise<CardDto | null> {
     const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+
     if (!authenticatedUserId)
       throw { status: 401, message: 'User not authenticated.' };
+
+    const files = (req as any).files as Express.Multer.File[];
 
     const card = await this.cardsService.updateCard(
       authenticatedUserId,
       id,
-      body
+      body,
+      files
     );
+
     if (!card) throw { status: 404, message: 'Card not found.' };
+
     return card;
   }
 
