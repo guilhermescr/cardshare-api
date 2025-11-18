@@ -281,6 +281,44 @@ export class CardsService {
     return result ? CardMapper.toDto(result) : null;
   }
 
+  async removeFileFromCard(
+    authenticatedUserId: string,
+    cardId: string,
+    fileUrl: string
+  ): Promise<CardDto | null> {
+    const query = {
+      _id: new Types.ObjectId(cardId),
+      owner: new Types.ObjectId(authenticatedUserId),
+    };
+
+    const card = await this.cardRepository.findOne(query);
+
+    if (!card) {
+      throw { status: 404, message: 'Card not found.' };
+    }
+
+    if (!card.mediaUrls.includes(fileUrl)) {
+      throw { status: 400, message: 'File not found in card media.' };
+    }
+
+    const publicId = this.extractPublicIdFromUrl(fileUrl);
+
+    await this.uploadService.deleteFile(publicId);
+
+    const updatedMediaUrls = card.mediaUrls.filter((url) => url !== fileUrl);
+    const updatedCard = await this.cardRepository.findOneAndUpdate(query, {
+      mediaUrls: updatedMediaUrls,
+    });
+
+    return updatedCard ? CardMapper.toDto(updatedCard) : null;
+  }
+
+  private extractPublicIdFromUrl(fileUrl: string): string {
+    const parts = fileUrl.split('/');
+    const folderPath = parts.slice(parts.indexOf('card-media')).join('/');
+    return folderPath.split('.')[0];
+  }
+
   async toggleLikeCard(
     authenticatedUser: AuthPayloadDto,
     cardId: string

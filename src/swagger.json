@@ -1100,6 +1100,70 @@
 				]
 			}
 		},
+		"/cards/{id}/file": {
+			"delete": {
+				"operationId": "RemoveFileFromCard",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/CardDto"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "File not found in card media"
+					},
+					"404": {
+						"description": "Card not found"
+					}
+				},
+				"tags": [
+					"Cards"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"fileUrl": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"fileUrl"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/cards/{id}/like": {
 			"post": {
 				"operationId": "ToggleLikeCard",

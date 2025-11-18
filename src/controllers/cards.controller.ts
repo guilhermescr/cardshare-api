@@ -152,6 +152,33 @@ export class CardsController extends Controller {
     this.setStatus(204);
   }
 
+  @Delete('{id}/file')
+  @Response(404, 'Card not found')
+  @Response(400, 'File not found in card media')
+  public async removeFileFromCard(
+    @Request() req: ExpressRequest,
+    @Path() id: string,
+    @Body() body: { fileUrl: string }
+  ): Promise<CardDto | null> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+
+    if (!authenticatedUserId) {
+      throw { status: 401, message: 'User not authenticated.' };
+    }
+
+    const { fileUrl } = body;
+
+    if (!fileUrl) {
+      throw { status: 400, message: 'File URL is required.' };
+    }
+
+    return this.cardsService.removeFileFromCard(
+      authenticatedUserId,
+      id,
+      fileUrl
+    );
+  }
+
   @Post('{id}/like')
   public async toggleLikeCard(
     @Request() req: ExpressRequest,

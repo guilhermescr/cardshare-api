@@ -60,6 +60,18 @@ export class UploadService {
     });
   }
 
+  async deleteFile(publicId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.destroy(publicId, (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
+
   async uploadProfilePicture(
     file: Express.Multer.File,
     userId: string
