@@ -19,3 +19,10 @@ export class UserDto {
   following!: UserRefDto[];
   followers!: UserRefDto[];
 }
+
+export class SummarizedUserDto {
+  id!: string;
+  fullName!: string;
+  username!: string;
+  profilePicture!: string | null;
+}

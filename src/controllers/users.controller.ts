@@ -19,7 +19,7 @@ import {
   PaginatedResponseDto,
 } from '../dtos/paginatedResponse.dto';
 import { CardDto } from '../dtos/card.dto';
-import { UserDto } from '../dtos/user.dto';
+import { SummarizedUserDto, UserDto } from '../dtos/user.dto';
 
 @Route('users')
 @Tags('Users')
@@ -34,7 +34,7 @@ export class UsersController extends Controller {
     @Request() req: ExpressRequest,
     @Query() search?: string,
     @Query() page?: number
-  ): Promise<PaginatedPageResponseDto<UserDto>> {
+  ): Promise<PaginatedPageResponseDto<SummarizedUserDto>> {
     const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
 
     if (!authenticatedUserId) {

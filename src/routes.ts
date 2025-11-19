@@ -340,6 +340,39 @@ const models: TsoaRoute.Models = {
     additionalProperties: false,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  SummarizedUserDto: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      fullName: { dataType: 'string', required: true },
+      username: { dataType: 'string', required: true },
+      profilePicture: {
+        dataType: 'union',
+        subSchemas: [
+          { dataType: 'string' },
+          { dataType: 'enum', enums: [null] },
+        ],
+        required: true,
+      },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  PaginatedPageResponseDto_SummarizedUserDto_: {
+    dataType: 'refObject',
+    properties: {
+      items: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'SummarizedUserDto' },
+        required: true,
+      },
+      nextCursor: { dataType: 'string' },
+      page: { dataType: 'double', required: true },
+      totalPages: { dataType: 'double', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   UserRefDto: {
     dataType: 'refObject',
     properties: {
@@ -391,21 +424,6 @@ const models: TsoaRoute.Models = {
         array: { dataType: 'refObject', ref: 'UserRefDto' },
         required: true,
       },
-    },
-    additionalProperties: false,
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  PaginatedPageResponseDto_UserDto_: {
-    dataType: 'refObject',
-    properties: {
-      items: {
-        dataType: 'array',
-        array: { dataType: 'refObject', ref: 'UserDto' },
-        required: true,
-      },
-      nextCursor: { dataType: 'string' },
-      page: { dataType: 'double', required: true },
-      totalPages: { dataType: 'double', required: true },
     },
     additionalProperties: false,
   },

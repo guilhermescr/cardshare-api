@@ -1,4 +1,4 @@
-import { UserDto, UserRefDto } from '../dtos/user.dto';
+import { SummarizedUserDto, UserDto, UserRefDto } from '../dtos/user.dto';
 import { ICard } from '../models/Card';
 import { IUser } from '../models/User';
 import { CardMapper } from './card.mapper';
@@ -28,5 +28,18 @@ export class UserMapper {
       favorites: CardMapper.toDtoArray(favorites),
       likes: CardMapper.toDtoArray(likes),
     };
+  }
+
+  static toSummarizedDto(user: IUser): SummarizedUserDto {
+    return {
+      id: user._id.toString(),
+      fullName: user.fullName,
+      username: user.username,
+      profilePicture: user.profilePicture,
+    };
+  }
+
+  static toSummarizedDtoArray(users: IUser[]): SummarizedUserDto[] {
+    return users.map((user) => this.toSummarizedDto(user));
   }
 }

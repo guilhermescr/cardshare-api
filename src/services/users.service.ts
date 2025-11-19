@@ -1,6 +1,6 @@
 import { AuthPayloadDto } from '../dtos/auth.dto';
 import { PaginatedPageResponseDto } from '../dtos/paginatedResponse.dto';
-import { UserDto, UserRefDto } from '../dtos/user.dto';
+import { SummarizedUserDto, UserDto, UserRefDto } from '../dtos/user.dto';
 import { UserMapper } from '../mappers/user.mapper';
 import { Card, CardVisibilityEnum } from '../models/Card';
 import { NotificationType } from '../models/Notification';
@@ -18,7 +18,7 @@ export class UsersService {
     search?: string,
     page: number = 1,
     limit: number = 10
-  ): Promise<PaginatedPageResponseDto<UserDto>> {
+  ): Promise<PaginatedPageResponseDto<SummarizedUserDto>> {
     const query: any = {};
 
     if (search) {
@@ -34,18 +34,14 @@ export class UsersService {
 
     const users = await this.userRepository.findPaginated(
       query,
-      '_id username fullName',
+      '_id username fullName profilePicture',
       'username',
       1,
       page,
       limit
     );
 
-    const userDtos = await Promise.all(
-      users.map((user) => this.buildUserDto(user, false))
-    );
-
-    return { items: userDtos, page, totalPages };
+    return { items: UserMapper.toSummarizedDtoArray(users), page, totalPages };
   }
 
   async getUserById(

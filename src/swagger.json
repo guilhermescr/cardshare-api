@@ -603,6 +603,59 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SummarizedUserDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"fullName": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"profilePicture": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"required": [
+					"id",
+					"fullName",
+					"username",
+					"profilePicture"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaginatedPageResponseDto_SummarizedUserDto_": {
+				"properties": {
+					"items": {
+						"items": {
+							"$ref": "#/components/schemas/SummarizedUserDto"
+						},
+						"type": "array"
+					},
+					"nextCursor": {
+						"type": "string"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"items",
+					"page",
+					"totalPages"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"UserRefDto": {
 				"properties": {
 					"id": {
@@ -686,34 +739,6 @@
 					"isFollowing",
 					"following",
 					"followers"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"PaginatedPageResponseDto_UserDto_": {
-				"properties": {
-					"items": {
-						"items": {
-							"$ref": "#/components/schemas/UserDto"
-						},
-						"type": "array"
-					},
-					"nextCursor": {
-						"type": "string"
-					},
-					"page": {
-						"type": "number",
-						"format": "double"
-					},
-					"totalPages": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"items",
-					"page",
-					"totalPages"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1536,7 +1561,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PaginatedPageResponseDto_UserDto_"
+									"$ref": "#/components/schemas/PaginatedPageResponseDto_SummarizedUserDto_"
 								}
 							}
 						}
