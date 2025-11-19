@@ -17,7 +17,7 @@ import { CardsService } from '../services/cards.service';
 import {
   PaginatedPageResponseDto,
   PaginatedResponseDto,
-} from '../dtos/paginatedResponse.dto';
+} from '../dtos/paginated-response.dto';
 import { CardDto } from '../dtos/card.dto';
 import { SummarizedUserDto, UserDto } from '../dtos/user.dto';
 

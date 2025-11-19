@@ -9,7 +9,7 @@ import {
 } from '../dtos/card.dto';
 import { CardVisibilityEnum, ICard } from '../models/Card';
 import { CardMapper } from '../mappers/card.mapper';
-import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
+import { PaginatedResponseDto } from '../dtos/paginated-response.dto';
 import { User } from '../models/User';
 import { CardRepository } from '../repositories/card.repository';
 import { UploadService } from './upload.service';

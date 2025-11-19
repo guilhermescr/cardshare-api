@@ -1,5 +1,5 @@
 import { AuthPayloadDto } from '../dtos/auth.dto';
-import { PaginatedPageResponseDto } from '../dtos/paginatedResponse.dto';
+import { PaginatedPageResponseDto } from '../dtos/paginated-response.dto';
 import { SummarizedUserDto, UserDto, UserRefDto } from '../dtos/user.dto';
 import { UserMapper } from '../mappers/user.mapper';
 import { Card, CardVisibilityEnum } from '../models/Card';

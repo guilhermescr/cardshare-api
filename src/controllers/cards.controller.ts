@@ -23,7 +23,7 @@ import {
   PopulatedCardDto,
   RelatedCardDto,
 } from '../dtos/card.dto';
-import { PaginatedResponseDto } from '../dtos/paginatedResponse.dto';
+import { PaginatedResponseDto } from '../dtos/paginated-response.dto';
 import { Request as ExpressRequest } from 'express';
 import { AuthenticatedRequest } from '../types/auth';
 import { AIService, GeneratedCardResponse } from '../services/ai.service';
