@@ -617,13 +617,43 @@
 					"profilePicture": {
 						"type": "string",
 						"nullable": true
+					},
+					"followers": {
+						"type": "number",
+						"format": "double"
+					},
+					"following": {
+						"type": "number",
+						"format": "double"
+					},
+					"cards": {
+						"type": "number",
+						"format": "double"
+					},
+					"likes": {
+						"type": "number",
+						"format": "double"
+					},
+					"favorites": {
+						"type": "number",
+						"format": "double"
+					},
+					"comments": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
 					"id",
 					"fullName",
 					"username",
-					"profilePicture"
+					"profilePicture",
+					"followers",
+					"following",
+					"cards",
+					"likes",
+					"favorites",
+					"comments"
 				],
 				"type": "object",
 				"additionalProperties": false

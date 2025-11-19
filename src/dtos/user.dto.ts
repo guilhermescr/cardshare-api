@@ -25,4 +25,10 @@ export class SummarizedUserDto {
   fullName!: string;
   username!: string;
   profilePicture!: string | null;
+  followers!: number;
+  following!: number;
+  cards!: number;
+  likes!: number;
+  favorites!: number;
+  comments!: number;
 }

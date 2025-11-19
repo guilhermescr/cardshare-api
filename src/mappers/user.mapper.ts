@@ -30,16 +30,22 @@ export class UserMapper {
     };
   }
 
-  static toSummarizedDto(user: IUser): SummarizedUserDto {
+  static toSummarizedDto(user: SummarizedUserDto): SummarizedUserDto {
     return {
-      id: user._id.toString(),
+      id: user.id,
       fullName: user.fullName,
       username: user.username,
       profilePicture: user.profilePicture,
+      followers: user.followers,
+      following: user.following,
+      cards: user.cards,
+      likes: user.likes,
+      favorites: user.favorites,
+      comments: user.comments,
     };
   }
 
-  static toSummarizedDtoArray(users: IUser[]): SummarizedUserDto[] {
+  static toSummarizedDtoArray(users: SummarizedUserDto[]): SummarizedUserDto[] {
     return users.map((user) => this.toSummarizedDto(user));
   }
 }

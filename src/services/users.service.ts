@@ -34,7 +34,6 @@ export class UsersService {
 
     const users = await this.userRepository.findPaginated(
       query,
-      '_id username fullName profilePicture',
       'username',
       1,
       page,
