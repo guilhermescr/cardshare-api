@@ -1017,6 +1017,14 @@
 								"most-liked"
 							]
 						}
+					},
+					{
+						"in": "query",
+						"name": "userId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			},

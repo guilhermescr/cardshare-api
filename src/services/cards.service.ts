@@ -38,38 +38,46 @@ export class CardsService {
     limit: number,
     cursor?: string,
     search?: string,
-    sortBy?: 'latest' | 'most-liked'
+    sortBy?: 'latest' | 'most-liked',
+    userId?: string
   ): Promise<PaginatedResponseDto<CardDto>> {
-    const query: RootFilterQuery<ICard> = {
-      $or: [
+    const query: RootFilterQuery<ICard> = {};
+
+    if (userId) {
+      query.owner = new Types.ObjectId(userId);
+    } else {
+      query.$or = [
         { visibility: CardVisibilityEnum.public },
         { owner: new Types.ObjectId(authenticatedUserId) },
-      ],
-    };
+      ];
+    }
 
     if (cursor) {
       query._id = { $lt: new Types.ObjectId(cursor) };
     }
 
     if (search) {
-      const users = await User.find({
-        username: { $regex: search, $options: 'i' },
-      }).select('_id');
-      const ownerIds = users.map((user) => user._id);
-
       query.$and = [
         {
           $or: [
-            {
-              title: { $regex: search, $options: 'i' },
-            },
-            {
-              description: { $regex: search, $options: 'i' },
-            },
-            ...(ownerIds.length > 0 ? [{ owner: { $in: ownerIds } }] : []),
+            { title: { $regex: search, $options: 'i' } },
+            { description: { $regex: search, $options: 'i' } },
           ],
         },
       ];
+
+      if (userId) {
+        query.$and.push({ owner: new Types.ObjectId(userId) });
+      } else {
+        const users = await User.find({
+          username: { $regex: search, $options: 'i' },
+        }).select('_id');
+        const ownerIds = users.map((user) => user._id);
+
+        if (ownerIds.length > 0) {
+          query.$and.push({ owner: { $in: ownerIds } });
+        }
+      }
     }
 
     if (sortBy === 'most-liked') {

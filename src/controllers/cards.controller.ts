@@ -41,7 +41,8 @@ export class CardsController extends Controller {
     @Query() limit?: number,
     @Query() cursor?: string,
     @Query() search?: string,
-    @Query() sortBy?: 'latest' | 'most-liked'
+    @Query() sortBy?: 'latest' | 'most-liked',
+    @Query() userId?: string
   ): Promise<PaginatedResponseDto<CardDto>> {
     const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
     if (!authenticatedUserId)
@@ -52,7 +53,8 @@ export class CardsController extends Controller {
       limit ?? 9,
       cursor,
       search,
-      sortBy
+      sortBy,
+      userId
     );
 
     paginatedCards.items = paginatedCards.items.map((card) => ({

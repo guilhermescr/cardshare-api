@@ -693,6 +693,7 @@ export function RegisterRoutes(app: Router) {
         { dataType: 'enum', enums: ['most-liked'] },
       ],
     },
+    userId: { in: 'query', name: 'userId', dataType: 'string' },
   };
   app.get(
     '/cards',
