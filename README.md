@@ -1,144 +1,134 @@
-<p align="center">
-  <img src="./cardshare-api-logo.png" alt="CardShare API Logo" width="180"/>
-</p>
+# CardShare API
 
-# 🃏 CardShare API
+<img src="cardshare-homepage.png" alt="CardShare Logo" style="display: block; margin-inline: auto;" />
 
-A RESTful API for creating, organizing, and sharing custom cards — each with a title, description, and optional image. Designed for flexible information sharing and discovery, CardShare enables users to publish, manage, and interact with cards using **Node.js**, **Express**, and **MongoDB**, following the **MVC architecture**.
+## Introduction
 
----
+The CardShare API is the backend service for the CardShare platform, designed to facilitate seamless sharing and management of digital cards. It provides robust features such as user authentication, card management, real-time notifications, AI-powered card generation, and efficient error handling, ensuring a smooth user experience.
 
-## 🚦 Project Status
+## Features
 
-This project is under active development.  
-See [`to-do.md`](./to-do.md) for the full roadmap.
+- **Authentication**: Secure user authentication and authorization using JWT.
+- **Card Management**: Create, update, delete, and retrieve digital cards.
+- **AI-Powered Card Generation**: Automatically generate creative card ideas using the Gemini AI model.
+- **Real-Time Notifications**: Stay updated with real-time notifications powered by Socket.IO.
+- **Error Handling**: Centralized error handling for consistent and informative error responses.
+- **File Uploads**: Upload and manage files using Multer and Cloudinary.
+- **Swagger Documentation**: Comprehensive API documentation for easy integration.
 
-### ✅ Completed (MVP)
+## Technology Stack
 
-- User registration & login (JWT, password hashing, email verification)
-- Card CRUD (create, read, update, delete)
-- Card visibility (public/private/unlisted)
-- Likes & favorites
-- Pagination for cards
-- MVC architecture
-- Input validation & error handling
+- **Node.js**
+- **Express**
+- **TypeScript**
+- **Mongoose**: ODM for MongoDB, enabling schema-based data modeling.
+- **Socket.IO**: Real-time, bidirectional communication between clients and servers.
+- **Multer**: Middleware for handling file uploads.
+- **Swagger**: API documentation and testing tool.
+- **Gemini AI**: AI model for generating creative card content.
 
-### 🟡 In Progress / Planned
+## Getting Started
 
-- Full-text search & filters
-- Comment system
-- Share card functionality
-- Activity feed
-- Notification system
-- Admin features
+### Prerequisites
 
----
+Ensure you have the following installed:
 
-## 🚀 Project Overview
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/)
+- [MongoDB](https://www.mongodb.com/)
 
-**Goal:**  
-Develop a robust backend service to handle card-related data and user authentication, complete with CRUD operations, validation, testing, and deployment.
+### Installation
 
-**Tech Stack:**
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/guilhermescr/cardshare-api.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd cardshare-api
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+4. Configure the environment variables:
+   - Refer to the `.env.example` file for the necessary environment variables.
+   - Create a `.env` file in the root directory and populate it with the required values.
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-- **Node.js** – JavaScript runtime
-- **Express.js** – Web framework
-- **MongoDB** – Data persistence
-- **Mongoose** – ODM for MongoDB
-- **JWT** – JSON Web Token for authentication
+## API Endpoints
 
----
+### Authentication
 
-## 🧱 Architecture
+- **POST /auth/login**: Authenticate a user.
+- **POST /auth/register**: Register a new user.
 
-The project follows the **MVC (Model-View-Controller)** pattern:
+### User Management
 
-```
-├── models/
-├── controllers/
-├── routes/
-├── middlewares/
-├── services/
-└── tests/
-```
+- **GET /users/:id**: Retrieve user details.
+- **PUT /users/:id**: Update user information.
+- **DELETE /users/:id**: Delete a user.
 
----
+### Card Operations
 
-## 🃏 Card Schema
+- **GET /cards**: Retrieve all cards.
+- **POST /cards**: Create a new card.
+- **POST /cards/generate**: Generate a creative card using AI.
+- **GET /cards/:id**: Retrieve a specific card.
+- **PUT /cards/:id**: Update a card.
+- **DELETE /cards/:id**: Delete a card.
 
-Here's the current structure for a `Card`:
+### Comments
 
-```ts
-Card {
-  _id: ObjectId,
-  name: string,         // Name of the card
-  type: string,         // Type or category of the card
-  description: string,  // Card effect or explanation
-  imageUrl: string,     // Link to the card's image
-  likes: number,        // Count of user likes
-  visibility: 'private' | 'public' | 'unlisted',    // Visibility flag
-  createdBy: ObjectId,  // User who created the card
-  createdAt: Date,
-  updatedAt: Date
-}
-```
+- **POST /comments**: Add a comment to a card.
+- **DELETE /comments/:id**: Delete a comment.
 
----
+### Notifications
 
-## 🔐 Authentication & User Management
+- **GET /notifications**: Retrieve all notifications.
 
-- JWT-based authentication
-- Protected routes for:
-  - Creating cards
-  - Updating cards
-  - Deleting cards
-- Public routes for:
-  - User registration (`/register`)
-  - User login (`/login`)
-  - Browsing public cards (`/cards?public=true`)
+### File Uploads
 
----
+- **POST /upload**: Upload a file.
 
-## 🔄 API Endpoints
+## Development
 
-| Method | Endpoint     | Description                         | Auth Required |
-| ------ | ------------ | ----------------------------------- | ------------- |
-| POST   | `/register`  | Register a new user                 | ❌            |
-| POST   | `/login`     | Authenticate user                   | ❌            |
-| POST   | `/cards`     | Create a new card                   | ✅            |
-| GET    | `/cards`     | Retrieve all cards (public/private) | ❌ / ✅       |
-| GET    | `/cards/:id` | Get card by ID                      | ❌ / ✅       |
-| PUT    | `/cards/:id` | Update card by ID                   | ✅            |
-| DELETE | `/cards/:id` | Delete card by ID                   | ✅            |
+### Available Scripts
 
----
+- **`npm run dev`**: Start the development server with hot-reloading.
+- **`npm run build`**: Build the project for production.
+- **`npm start`**: Start the production server.
+- **`npm run tsoa`**: Generate Swagger documentation.
 
-## ✅ Features
+## Contributing
 
-- ✅ MVC Architecture
-- ✅ Card CRUD operations
-- ✅ JWT-based auth
-- ✅ Input validation
-- ✅ Centralized error handling
-- ✅ Public/Private card visibility
-- ✅ Likes support
+We welcome contributions! To contribute:
 
-See [`to-do.md`](./to-do.md) for planned enhancements.
+1. Fork the repository.
+2. Create a new branch:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. Commit your changes:
+   ```bash
+   git commit -m "Add your message here"
+   ```
+4. Push to the branch:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+5. Open a pull request.
 
----
+## Reporting Issues
 
-## 📦 Deployment
+If you encounter any issues or have feature requests, please open an issue on the [GitHub repository](https://github.com/guilhermescr/cardshare-api/issues) or contact the author directly.
 
-Deploy this API on services like:
+## Author
 
-- [Render](https://render.com)
-- [Vercel](https://vercel.com)
-- [Heroku](https://www.heroku.com)
-
-Make sure to configure environment variables properly (e.g., JWT_SECRET, DB_URI).
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
+**Guilherme Rocha**  
+[GitHub Profile](https://github.com/guilhermescr)
