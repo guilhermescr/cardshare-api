@@ -44,7 +44,12 @@ export class CardsService {
     const query: RootFilterQuery<ICard> = {};
 
     if (userId) {
-      query.owner = new Types.ObjectId(userId);
+      if (userId !== authenticatedUserId) {
+        query.owner = new Types.ObjectId(userId);
+        query.visibility = CardVisibilityEnum.public;
+      } else {
+        query.owner = new Types.ObjectId(userId);
+      }
     } else {
       query.$or = [
         { visibility: CardVisibilityEnum.public },
