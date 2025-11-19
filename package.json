@@ -2,11 +2,10 @@
   "name": "cardshare-api",
   "version": "1.0.0",
   "description": "CardShare API with Express.",
-  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "build": "tsc",
+    "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "tsoa:spec": "tsoa spec",
     "tsoa:routes": "tsoa routes",
