@@ -65,6 +65,10 @@ export class CommentsService {
 
     const mappedComment = CommentMapper.toPopulatedDto(result);
 
+    await this.cardRepository.update(mappedComment.card.id, {
+      $pull: { comments: commentId },
+    });
+
     if (mappedComment.card.owner) {
       const notification =
         await this.notificationService.deleteNotificationByTypeAndSender({
