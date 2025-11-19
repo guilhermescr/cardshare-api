@@ -55,6 +55,14 @@ export class UsersService {
     return this.buildUserDto(foundUser, isSelf, authenticatedUserId);
   }
 
+  async getSummarizedUserById(userId: string): Promise<SummarizedUserDto> {
+    const summarizedUser = await this.userRepository.findSummarizedById(userId);
+
+    if (!summarizedUser) throw { status: 404, message: 'User not found.' };
+
+    return UserMapper.toSummarizedDto(summarizedUser);
+  }
+
   async getUserByUsername(
     authenticatedUserId: string,
     username: string

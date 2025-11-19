@@ -1487,6 +1487,52 @@ export function RegisterRoutes(app: Router) {
     }
   );
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsUsersController_getSummarizedUserById: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    req: { in: 'request', name: 'req', required: true, dataType: 'object' },
+    id: { in: 'path', name: 'id', required: true, dataType: 'string' },
+  };
+  app.get(
+    '/users/:id/summarized',
+    authenticateMiddleware([{ jwt: [] }]),
+    ...fetchMiddlewares<RequestHandler>(UsersController),
+    ...fetchMiddlewares<RequestHandler>(
+      UsersController.prototype.getSummarizedUserById
+    ),
+
+    async function UsersController_getSummarizedUserById(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsUsersController_getSummarizedUserById,
+          request,
+          response,
+        });
+
+        const controller = new UsersController();
+
+        await templateService.apiHandler({
+          methodName: 'getSummarizedUserById',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: undefined,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   const argsUsersController_getUserByUsername: Record<
     string,
     TsoaRoute.ParameterSchema

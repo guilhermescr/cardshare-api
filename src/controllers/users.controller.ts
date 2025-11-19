@@ -54,15 +54,42 @@ export class UsersController extends Controller {
     @Path() id: string
   ): Promise<{ user: UserDto }> {
     const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
-    if (!authenticatedUserId)
+
+    if (!authenticatedUserId) {
       throw { status: 401, message: 'User not authenticated.' };
+    }
+
     const targetId = id === 'me' ? authenticatedUserId : id;
+
     const user = await this.usersService.getUserById(
       authenticatedUserId,
       targetId
     );
+
     if (!user) throw { status: 404, message: 'User not found.' };
+
     return { user };
+  }
+
+  @Get('{id}/summarized')
+  @Response(401, 'User not authenticated')
+  @Response(404, 'User not found')
+  public async getSummarizedUserById(
+    @Request() req: ExpressRequest,
+    @Path() id: string
+  ): Promise<{ user: SummarizedUserDto }> {
+    const authenticatedUserId = (req as AuthenticatedRequest).user?.id;
+
+    if (!authenticatedUserId) {
+      throw { status: 401, message: 'User not authenticated.' };
+    }
+
+    const targetId = id === 'me' ? authenticatedUserId : id;
+
+    const summarizedUser = await this.usersService.getSummarizedUserById(
+      targetId
+    );
+    return { user: summarizedUser };
   }
 
   @Get('username/{username}')
